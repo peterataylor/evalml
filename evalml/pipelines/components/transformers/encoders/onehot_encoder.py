@@ -1,12 +1,10 @@
 import numpy as np
 import pandas as pd
-import woodwork as ww
 from sklearn.preprocessing import OneHotEncoder as SKOneHotEncoder
 
 from evalml.pipelines.components import ComponentBaseMeta
 from evalml.pipelines.components.transformers.transformer import Transformer
 from evalml.utils import (
-    _convert_woodwork_types_wrapper,
     _retain_custom_types_and_initalize_woodwork,
     infer_feature_types
 )
@@ -88,7 +86,7 @@ class OneHotEncoder(Transformer, metaclass=OneHotEncoderMeta):
         if self.features_to_encode is None:
             self.features_to_encode = self._get_cat_cols(X)
 
-        X = _convert_woodwork_types_wrapper(X)
+        #X = _convert_woodwork_types_wrapper(X)
         X_t = X
         invalid_features = [col for col in self.features_to_encode if col not in list(X.columns)]
         if len(invalid_features) > 0:
@@ -140,8 +138,7 @@ class OneHotEncoder(Transformer, metaclass=OneHotEncoderMeta):
             ww.DataTable: Transformed data, where each categorical feature has been encoded into numerical columns using one-hot encoding.
         """
         X_ww = infer_feature_types(X)
-        X_copy = _convert_woodwork_types_wrapper(X_ww)
-        X_copy = self._handle_parameter_handle_missing(X_copy)
+        X_copy = self._handle_parameter_handle_missing(X_ww)
 
         X_t = pd.DataFrame()
         # Add the non-categorical columns, untouched
@@ -160,7 +157,7 @@ class OneHotEncoder(Transformer, metaclass=OneHotEncoderMeta):
             X_t = X_t.drop(columns=self._features_to_drop)
             self._feature_names = X_t.columns
 
-        return _retain_custom_types_and_initalize_woodwork(X_ww, X_t)
+        return _retain_custom_types_and_initalize_woodwork(X_ww.ww.logical_types, X_t)
 
     def _handle_parameter_handle_missing(self, X):
         """Helper method to handle the `handle_missing` parameter."""
@@ -170,9 +167,9 @@ class OneHotEncoder(Transformer, metaclass=OneHotEncoderMeta):
         if self.parameters['handle_missing'] == "as_category":
             for col in cat_cols:
                 if X[col].dtype == 'category' and pd.isna(X[col]).any():
-                    X[col] = X[col].cat.add_categories("nan")
-                    X[col] = X[col].where(~pd.isna(X[col]), other='nan')
-            X[cat_cols] = X[cat_cols].replace(np.nan, "nan")
+                    X.ww[col] = X[col].cat.add_categories("nan")
+                    X.ww[col] = X[col].where(~pd.isna(X[col]), other='nan')
+                X.ww[col] = X[col].replace(np.nan, "nan")
         return X
 
     def categories(self, feature_name):

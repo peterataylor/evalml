@@ -4,13 +4,11 @@ import pytest
 from pandas.testing import assert_frame_equal
 from woodwork.exceptions import TypeConversionError
 from woodwork.logical_types import (
-    Boolean,
     Categorical,
     Datetime,
     Double,
-    Integer,
-    NaturalLanguage
 )
+from evalml import Integer, String, Boolean
 
 from evalml.exceptions import ComponentNotYetFittedError
 from evalml.pipelines.components import OneHotEncoder
@@ -357,7 +355,7 @@ def test_all_numerical_dtype():
                       "col_2": [3, 2, 5, 1, 3],
                       "col_3": [0, 0, 1, 3, 2],
                       "col_4": [2, 4, 1, 4, 0]})
-    X_expected = X.astype("Int64")
+    X_expected = X.copy()
     encoder = OneHotEncoder(top_n=5)
     encoder.fit(X)
     X_t = encoder.transform(X)
@@ -538,7 +536,7 @@ def test_ohe_column_names_unique():
                                   pd.DataFrame(pd.Series(['this will be a natural language column because length', 'yay', 'hay'], dtype="string"))])
 def test_ohe_woodwork_custom_overrides_returned_by_components(X_df):
     y = pd.Series([1, 2, 1])
-    override_types = [Integer, Double, Categorical, NaturalLanguage, Datetime, Boolean]
+    override_types = [Integer, Double, Categorical, String, Datetime, Boolean]
     for logical_type in override_types:
         try:
             X = X_df

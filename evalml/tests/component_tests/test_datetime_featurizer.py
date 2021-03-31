@@ -7,9 +7,9 @@ from woodwork.logical_types import (
     Categorical,
     Datetime,
     Double,
-    Integer,
     NaturalLanguage
 )
+from evalml import Integer, String
 
 from evalml.pipelines.components import DateTimeFeaturizer
 
@@ -32,10 +32,10 @@ def test_datetime_featurizer_encodes_as_ints():
                                "2019-08-19 20:20:20", "2020-01-03 06:45:12"]})
     dt = DateTimeFeaturizer()
     X_transformed_df = dt.fit_transform(X)
-    expected = pd.DataFrame({"date_year": pd.Series([2016, 2017, 2018, 2019, 2020], dtype="Int64"),
-                             "date_month": pd.Series([3, 2, 6, 7, 0], dtype="Int64"),
-                             "date_day_of_week": pd.Series([0, 3, 2, 1, 5], dtype="Int64"),
-                             "date_hour": pd.Series([16, 13, 7, 20, 6], dtype="Int64")})
+    expected = pd.DataFrame({"date_year": pd.Series([2016, 2017, 2018, 2019, 2020]),
+                             "date_month": pd.Series([3, 2, 6, 7, 0]),
+                             "date_day_of_week": pd.Series([0, 3, 2, 1, 5]),
+                             "date_hour": pd.Series([16, 13, 7, 20, 6])})
     feature_names = {'date_month': {'April': 3, 'March': 2, 'July': 6, 'August': 7, 'January': 0},
                      'date_day_of_week': {'Sunday': 0, 'Wednesday': 3, 'Tuesday': 2, 'Monday': 1, 'Friday': 5}
                      }
@@ -54,10 +54,10 @@ def test_datetime_featurizer_encodes_as_ints():
     # Test that sequential calls to the same DateTimeFeaturizer work as expected by using the first dt we defined
     X = pd.DataFrame({"date": ["2020-04-10", "2017-03-15", "2019-08-19"]})
     X_transformed_df = dt.fit_transform(X)
-    expected = pd.DataFrame({"date_year": pd.Series([2020, 2017, 2019], dtype="Int64"),
-                             "date_month": pd.Series([3, 2, 7], dtype="Int64"),
-                             "date_day_of_week": pd.Series([5, 3, 1], dtype="Int64"),
-                             "date_hour": pd.Series([0, 0, 0], dtype="Int64")})
+    expected = pd.DataFrame({"date_year": pd.Series([2020, 2017, 2019]),
+                             "date_month": pd.Series([3, 2, 7]),
+                             "date_day_of_week": pd.Series([5, 3, 1]),
+                             "date_hour": pd.Series([0, 0, 0])})
     assert_frame_equal(expected, X_transformed_df)
     assert dt.get_feature_names() == {'date_month': {'April': 3, 'March': 2, 'August': 7},
                                       'date_day_of_week': {'Friday': 5, 'Wednesday': 3, 'Monday': 1}}
@@ -80,8 +80,8 @@ def test_datetime_featurizer_transform():
     datetime_transformer.fit(X)
     transformed_df = datetime_transformer.transform(X_test)
     assert list(transformed_df.columns) == ['Numerical 1', 'Numerical 2', 'Date Col 1_year', 'Date Col 2_year']
-    assert transformed_df["Date Col 1_year"].equals(pd.Series([2020] * 20, dtype="Int64"))
-    assert transformed_df["Date Col 2_year"].equals(pd.Series([2020] * 20, dtype="Int64"))
+    assert transformed_df["Date Col 1_year"].equals(pd.Series([2020] * 20))
+    assert transformed_df["Date Col 2_year"].equals(pd.Series([2020] * 20))
     assert datetime_transformer.get_feature_names() == {}
 
 
@@ -93,8 +93,8 @@ def test_datetime_featurizer_fit_transform():
                       'Numerical 2': [0] * 20})
     transformed_df = datetime_transformer.fit_transform(X)
     assert list(transformed_df.columns) == ['Numerical 1', 'Numerical 2', 'Date Col 1_year', 'Date Col 2_year']
-    assert transformed_df["Date Col 1_year"].equals(pd.Series([2020] * 20, dtype="Int64"))
-    assert transformed_df["Date Col 2_year"].equals(pd.Series([2020] * 20, dtype="Int64"))
+    assert transformed_df["Date Col 1_year"].equals(pd.Series([2020] * 20))
+    assert transformed_df["Date Col 2_year"].equals(pd.Series([2020] * 20))
     assert datetime_transformer.get_feature_names() == {}
 
 
@@ -133,7 +133,7 @@ def test_datetime_featurizer_custom_features_to_extract():
 def test_datetime_featurizer_no_datetime_cols():
     datetime_transformer = DateTimeFeaturizer(features_to_extract=["year", "month"])
     X = pd.DataFrame([[1, 3, 4], [2, 5, 2]])
-    expected = X.astype("Int64")
+    expected = X.copy()
     datetime_transformer.fit(X)
     transformed = datetime_transformer.transform(X)
     assert_frame_equal(expected, transformed)
@@ -150,21 +150,21 @@ def test_datetime_featurizer_numpy_array_input():
 
 
 @pytest.mark.parametrize("X_df", [pd.DataFrame(pd.to_datetime(['20190902', '20200519', '20190607'], format='%Y%m%d')),
-                                  pd.DataFrame(pd.Series([1, 2, 3], dtype="Int64")),
+                                  pd.DataFrame(pd.Series([1, 2, 3])),
                                   pd.DataFrame(pd.Series([1., 2., 3.], dtype="float")),
                                   pd.DataFrame(pd.Series(['a', 'b', 'a'], dtype="category")),
                                   pd.DataFrame(pd.Series(['this will be a natural language column because length', 'yay', 'hay'], dtype="string"))])
 @pytest.mark.parametrize("with_datetime_col", [True, False])
 @pytest.mark.parametrize("encode_as_categories", [True, False])
 def test_datetime_featurizer_woodwork_custom_overrides_returned_by_components(with_datetime_col, encode_as_categories, X_df):
-    override_types = [Integer, Double, Categorical, NaturalLanguage, Datetime]
+    override_types = [Integer, Double, Categorical, String, Datetime]
     if with_datetime_col:
         X_df['datetime col'] = pd.to_datetime(['20200101', '20200519', '20190607'], format='%Y%m%d')
     for logical_type in override_types:
         try:
             X = X_df
             X.ww.init(logical_types={0: logical_type})
-        except ww.exceptions.TypeConversionError:
+        except (ww.exceptions.TypeConversionError, TypeError):
             continue
         datetime_transformer = DateTimeFeaturizer(encode_as_categories=encode_as_categories)
         datetime_transformer.fit(X)

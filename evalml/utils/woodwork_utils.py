@@ -90,7 +90,7 @@ def _convert_woodwork_types_wrapper(pd_data):
     return pd_data
 
 
-def _retain_custom_types_and_initalize_woodwork(old_datatable, new_dataframe, ltypes_to_ignore=None):
+def _retain_custom_types_and_initalize_woodwork(old_logical_types, new_dataframe, ltypes_to_ignore=None):
     """
     Helper method which will take an old Woodwork DataTable and a new pandas DataFrame and return a
     new DataTable that will try to retain as many logical types from the old DataTable that exist in the new
@@ -108,18 +108,18 @@ def _retain_custom_types_and_initalize_woodwork(old_datatable, new_dataframe, lt
     """
     if ltypes_to_ignore is None:
         ltypes_to_ignore = []
-    col_intersection = set(old_datatable.columns).intersection(set(new_dataframe.columns))
-    logical_types = old_datatable.ww.logical_types
-    retained_logical_types = {}
-    for col in col_intersection:
-        if logical_types[col] in ltypes_to_ignore:
-            continue
-        if str(new_dataframe[col].dtype) != logical_types[col].primary_dtype:
-            try:
-                new_dataframe[col].astype(logical_types[col].primary_dtype)
-                retained_logical_types[col] = logical_types[col]
-            except (ValueError, TypeError):
-                pass
+    col_intersection = set(old_logical_types.keys()).intersection(set(new_dataframe.columns))
+    retained_logical_types = {col: ltype for col, ltype in old_logical_types.items() if col in col_intersection}
+    # retained_logical_types = {}
+    # for col in col_intersection:
+    #     if logical_types[col] in ltypes_to_ignore:
+    #         continue
+    #     if str(new_dataframe[col].dtype) != logical_types[col].primary_dtype:
+    #         try:
+    #             new_dataframe[col].astype(logical_types[col].primary_dtype)
+    #             retained_logical_types[col] = logical_types[col]
+    #         except (ValueError, TypeError):
+    #             pass
     new_dataframe.ww.init(logical_types=retained_logical_types)
     return new_dataframe
 
