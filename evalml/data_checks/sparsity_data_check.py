@@ -68,7 +68,6 @@ class SparsityDataCheck(DataCheck):
         }
 
         X = infer_feature_types(X)
-        X = _convert_woodwork_types_wrapper(X)
 
         res = X.apply(SparsityDataCheck.sparsity_score, count_threshold=self.unique_count_threshold)
         too_sparse_cols = [col for col in res.index[res < self.threshold]]

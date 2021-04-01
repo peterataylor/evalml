@@ -40,8 +40,6 @@ class TargetLeakageDataCheck(DataCheck):
         X_num = X.ww.select(include=numeric_and_boolean_ww)
         if y.ww.logical_type not in numeric_and_boolean_ww or len(X_num.columns) == 0:
             return highly_corr_cols
-        X_num = _convert_woodwork_types_wrapper(X_num)
-        y = _convert_woodwork_types_wrapper(y)
         highly_corr_cols = [label for label, col in X_num.iteritems() if abs(y.corr(col)) >= self.pct_corr_threshold]
         return highly_corr_cols
 
@@ -97,8 +95,6 @@ class TargetLeakageDataCheck(DataCheck):
         if self.method == 'pearson':
             highly_corr_cols = self._calculate_pearson(X, y)
         else:
-            X = _convert_woodwork_types_wrapper(X)
-            y = _convert_woodwork_types_wrapper(y)
             highly_corr_cols = self._calculate_mutual_information(X, y)
 
         warning_msg = "Column '{}' is {}% or more correlated with the target"

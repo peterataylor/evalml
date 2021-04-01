@@ -51,8 +51,6 @@ class TimeSeriesRegressionPipeline(RegressionPipeline, metaclass=TimeSeriesPipel
 
         X = infer_feature_types(X)
         y = infer_feature_types(y)
-        X = _convert_woodwork_types_wrapper(X)
-        y = _convert_woodwork_types_wrapper(y)
         X_t = self._compute_features_during_fit(X, y)
 
         y_shifted = y.shift(-self.gap)
@@ -77,10 +75,7 @@ class TimeSeriesRegressionPipeline(RegressionPipeline, metaclass=TimeSeriesPipel
             X = pd.DataFrame()
         X = infer_feature_types(X)
         y = infer_feature_types(y)
-        X = _convert_woodwork_types_wrapper(X)
-        y = _convert_woodwork_types_wrapper(y)
         features = self.compute_estimator_features(X, y)
-        features = _convert_woodwork_types_wrapper(features)
         features_no_nan, y = drop_rows_with_nans(features, y)
         y_arg = None
         if self.estimator.predict_uses_y:
@@ -105,12 +100,9 @@ class TimeSeriesRegressionPipeline(RegressionPipeline, metaclass=TimeSeriesPipel
         if X is None:
             X = pd.DataFrame()
         X = infer_feature_types(X)
-        X = _convert_woodwork_types_wrapper(X)
         y = infer_feature_types(y)
-        y = _convert_woodwork_types_wrapper(y)
 
         y_predicted = self.predict(X, y)
-        y_predicted = _convert_woodwork_types_wrapper(y_predicted)
 
         y_shifted = y.shift(-self.gap)
         objectives = self.create_objectives(objectives)

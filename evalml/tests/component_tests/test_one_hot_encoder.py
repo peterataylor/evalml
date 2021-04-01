@@ -13,7 +13,6 @@ from evalml import Integer, String, Boolean
 from evalml.exceptions import ComponentNotYetFittedError
 from evalml.pipelines.components import OneHotEncoder
 from evalml.utils import (
-    _convert_woodwork_types_wrapper,
     get_random_seed,
     infer_feature_types
 )
@@ -281,7 +280,6 @@ def test_more_top_n_unique_values():
 
     # Conversion changes the resulting dataframe dtype, resulting in a different random state, so we need make the conversion here too
     X = infer_feature_types(X)
-    X = _convert_woodwork_types_wrapper(X)
     col_1_counts = X["col_1"].value_counts(dropna=False).to_frame()
     col_1_counts = col_1_counts.sample(frac=1, random_state=random_seed)
     col_1_counts = col_1_counts.sort_values(["col_1"], ascending=False, kind='mergesort')
@@ -316,7 +314,6 @@ def test_more_top_n_unique_values_large():
 
     # Conversion changes the resulting dataframe dtype, resulting in a different random state, so we need make the conversion here too
     X = infer_feature_types(X)
-    X = _convert_woodwork_types_wrapper(X)
     col_1_counts = X["col_1"].value_counts(dropna=False).to_frame()
     col_1_counts = col_1_counts.sample(frac=1, random_state=random_seed)
     col_1_counts = col_1_counts.sort_values(["col_1"], ascending=False, kind='mergesort')

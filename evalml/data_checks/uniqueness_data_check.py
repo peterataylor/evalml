@@ -72,7 +72,6 @@ class UniquenessDataCheck(DataCheck):
         }
 
         X = infer_feature_types(X)
-        X = _convert_woodwork_types_wrapper(X)
 
         res = X.apply(UniquenessDataCheck.uniqueness_score)
 

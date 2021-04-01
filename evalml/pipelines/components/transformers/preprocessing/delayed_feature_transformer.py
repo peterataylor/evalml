@@ -55,9 +55,8 @@ class DelayedFeatureTransformer(Transformer):
 
     @staticmethod
     def _encode_y_while_preserving_index(y):
-        original_y = _convert_woodwork_types_wrapper(y)
-        y_encoded = LabelEncoder().fit_transform(original_y)
-        y = pd.Series(y_encoded, index=original_y.index)
+        y_encoded = LabelEncoder().fit_transform(y)
+        y = pd.Series(y_encoded, index=y.index)
         return y
 
     @staticmethod
@@ -104,8 +103,6 @@ class DelayedFeatureTransformer(Transformer):
             y = infer_feature_types(y)
             if y.ww.logical_type == logical_types.Categorical:
                 y = self._encode_y_while_preserving_index(y)
-            else:
-                y = _convert_woodwork_types_wrapper(y)
             X_ww = X_ww.assign(**{f"target_delay_{t}": y.shift(t)
                                   for t in range(self.start_delay_for_target, self.max_delay + 1)})
 

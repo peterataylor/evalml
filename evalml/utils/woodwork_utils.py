@@ -4,8 +4,9 @@ import pandas as pd
 import woodwork as ww
 
 from evalml.utils.gen_utils import is_all_numeric
+from evalml import Integer, Boolean
 
-numeric_and_boolean_ww = [ww.logical_types.Integer, ww.logical_types.Double, ww.logical_types.Boolean]
+numeric_and_boolean_ww = [Integer, ww.logical_types.Double, Boolean]
 
 
 def _numpy_to_pandas(array):

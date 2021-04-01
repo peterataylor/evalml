@@ -65,7 +65,6 @@ class IDColumnsDataCheck(DataCheck):
         id_cols = {col: 0.95 for col in cols_named_id}
 
         X = X.ww.select(include=['Integer', 'Categorical'])
-        X = _convert_woodwork_types_wrapper(X)
 
         check_all_unique = (X.nunique() == len(X))
         cols_with_all_unique = check_all_unique[check_all_unique].index.tolist()  # columns whose values are all unique

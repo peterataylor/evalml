@@ -12,6 +12,7 @@ from evalml.utils.woodwork_utils import (
     infer_feature_types,
     numeric_and_boolean_ww
 )
+from evalml import Integer
 
 
 class InvalidTargetDataCheck(DataCheck):
@@ -79,8 +80,7 @@ class InvalidTargetDataCheck(DataCheck):
                                                     data_check_name=self.name,
                                                     message_code=DataCheckMessageCode.TARGET_UNSUPPORTED_TYPE,
                                                     details={"unsupported_type": y.ww.logical_type.type_string}).to_dict())
-        y_df = _convert_woodwork_types_wrapper(y)
-        null_rows = y_df.isnull()
+        null_rows = y.isnull()
         if null_rows.any():
             num_null_rows = null_rows.sum()
             pct_null_rows = null_rows.mean() * 100
@@ -89,7 +89,7 @@ class InvalidTargetDataCheck(DataCheck):
                                                     message_code=DataCheckMessageCode.TARGET_HAS_NULL,
                                                     details={"num_null_rows": num_null_rows, "pct_null_rows": pct_null_rows}).to_dict())
 
-        value_counts = y_df.value_counts()
+        value_counts = y.value_counts()
         unique_values = value_counts.index.tolist()
 
         if self.problem_type == ProblemTypes.BINARY and len(value_counts) != 2:
@@ -133,9 +133,9 @@ class InvalidTargetDataCheck(DataCheck):
                     message_code=DataCheckMessageCode.TARGET_MULTICLASS_HIGH_UNIQUE_CLASS,
                     details=details).to_dict())
 
-        any_neg = not (y_df > 0).all() if y.ww.logical_type in [ww.logical_types.Integer, ww.logical_types.Double] else None
+        any_neg = not (y > 0).all() if y.ww.logical_type in [Integer, ww.logical_types.Double] else None
         if any_neg and self.objective.positive_only:
-            details = {"Count of offending values": sum(val <= 0 for val in y_df.values.flatten())}
+            details = {"Count of offending values": sum(val <= 0 for val in y.values.flatten())}
             results["errors"].append(DataCheckError(message=f"Target has non-positive values which is not supported for {self.objective.name}",
                                                     data_check_name=self.name,
                                                     message_code=DataCheckMessageCode.TARGET_INCOMPATIBLE_OBJECTIVE,
@@ -144,7 +144,7 @@ class InvalidTargetDataCheck(DataCheck):
         if X is not None:
             X = infer_feature_types(X)
             X_index = list(X.index)
-            y_index = list(y_df.index)
+            y_index = list(y.index)
             X_length = len(X_index)
             y_length = len(y_index)
             if X_length != y_length:
