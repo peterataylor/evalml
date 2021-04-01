@@ -9,7 +9,6 @@ from evalml.data_checks import (
 from evalml.objectives import get_objective
 from evalml.problem_types import ProblemTypes, handle_problem_types
 from evalml.utils.woodwork_utils import (
-    _convert_woodwork_types_wrapper,
     infer_feature_types,
     numeric_and_boolean_ww
 )

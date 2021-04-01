@@ -7,7 +7,6 @@ from evalml.pipelines.components.transformers.encoders.onehot_encoder import (
     OneHotEncoderMeta
 )
 from evalml.utils import (
-    _convert_woodwork_types_wrapper,
     _retain_custom_types_and_initalize_woodwork,
     import_or_raise,
     infer_feature_types

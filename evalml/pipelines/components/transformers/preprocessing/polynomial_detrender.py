@@ -4,7 +4,6 @@ from skopt.space import Integer
 
 from evalml.pipelines.components.transformers.transformer import Transformer
 from evalml.utils import (
-    _convert_woodwork_types_wrapper,
     import_or_raise,
     infer_feature_types
 )

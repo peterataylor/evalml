@@ -16,7 +16,6 @@ from evalml.model_family import ModelFamily
 from evalml.preprocessing import split_data
 from evalml.problem_types import is_binary, is_multiclass
 from evalml.utils.logger import get_logger
-from evalml.utils.woodwork_utils import _convert_woodwork_types_wrapper
 
 logger = get_logger(__file__)
 
@@ -124,10 +123,8 @@ class EngineBase(ABC):
         start = time.time()
         cv_data = []
         logger.info("\tStarting cross validation")
-        X_pd = _convert_woodwork_types_wrapper(full_X_train)
-        y_pd = _convert_woodwork_types_wrapper(full_y_train)
-        X_data_types = X_pd.ww.logical_types
-        for i, (train, valid) in enumerate(automl.data_splitter.split(X_pd, y_pd)):
+        X_data_types = full_X_train.ww.logical_types
+        for i, (train, valid) in enumerate(automl.data_splitter.split(full_X_train, full_y_train)):
             if pipeline.model_family == ModelFamily.ENSEMBLE and i > 0:
                 # Stacked ensembles do CV internally, so we do not run CV here for performance reasons.
                 logger.debug(f"Skipping fold {i} because CV for stacked ensembles is not supported.")

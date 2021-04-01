@@ -55,41 +55,6 @@ def infer_feature_types(data, feature_types=None):
     return ww_data
 
 
-def _convert_woodwork_types_wrapper(pd_data):
-    """
-    Converts a pandas data structure that may have extension or nullable dtypes to dtypes that numpy can understand and handle.
-
-    Arguments:
-        pd_data (pd.Series, pd.DataFrame, pd.ExtensionArray): Pandas data structure
-
-    Returns:
-        Modified pandas data structure (pd.DataFrame or pd.Series) with original data and dtypes that can be handled by numpy
-    """
-    nullable_to_numpy_mapping = {pd.Int64Dtype: 'int64',
-                                 pd.BooleanDtype: 'bool',
-                                 pd.StringDtype: 'object'}
-    nullable_to_numpy_mapping_nan = {pd.Int64Dtype: 'float64',
-                                     pd.BooleanDtype: 'object',
-                                     pd.StringDtype: 'object'}
-
-    if isinstance(pd_data, pd.api.extensions.ExtensionArray):
-        if pd.isna(pd_data).any():
-            return pd.Series(pd_data.to_numpy(na_value=np.nan), dtype=nullable_to_numpy_mapping_nan[type(pd_data.dtype)])
-        return pd.Series(pd_data.to_numpy(na_value=np.nan), dtype=nullable_to_numpy_mapping[type(pd_data.dtype)])
-    if (isinstance(pd_data, pd.Series) and type(pd_data.dtype) in nullable_to_numpy_mapping):
-        if pd.isna(pd_data).any():
-            return pd.Series(pd_data.to_numpy(na_value=np.nan), dtype=nullable_to_numpy_mapping_nan[type(pd_data.dtype)], index=pd_data.index, name=pd_data.name)
-        return pd.Series(pd_data.to_numpy(na_value=np.nan), dtype=nullable_to_numpy_mapping[type(pd_data.dtype)], index=pd_data.index, name=pd_data.name)
-    if isinstance(pd_data, pd.DataFrame):
-        for col_name, col in pd_data.iteritems():
-            if type(col.dtype) in nullable_to_numpy_mapping:
-                if pd.isna(pd_data[col_name]).any():
-                    pd_data[col_name] = pd.Series(pd_data[col_name].to_numpy(na_value=np.nan), dtype=nullable_to_numpy_mapping_nan[type(pd_data[col_name].dtype)])
-                else:
-                    pd_data[col_name] = pd_data[col_name].astype(nullable_to_numpy_mapping[type(col.dtype)])
-    return pd_data
-
-
 def _retain_custom_types_and_initalize_woodwork(old_logical_types, new_dataframe, ltypes_to_ignore=None):
     """
     Helper method which will take an old Woodwork DataTable and a new pandas DataFrame and return a

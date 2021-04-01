@@ -2,10 +2,9 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 import pandas as pd
-import woodwork as ww
 
 from evalml.problem_types import handle_problem_types
-from evalml.utils import _convert_woodwork_types_wrapper, classproperty
+from evalml.utils import classproperty
 
 
 class ObjectiveBase(ABC):
@@ -91,7 +90,7 @@ class ObjectiveBase(ABC):
             pd.DataFrame or pd.Series: a pd.Series, or pd.DataFrame object if predicted probabilities were provided.
         """
         if isinstance(input_data, (pd.Series, pd.DataFrame)):
-            return _convert_woodwork_types_wrapper(input_data)
+            return input_data
         if isinstance(input_data, list):
             if isinstance(input_data[0], list):
                 return pd.DataFrame(input_data)

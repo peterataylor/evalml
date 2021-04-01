@@ -6,7 +6,6 @@ from evalml.model_family import ModelFamily
 from evalml.pipelines.components.estimators import Estimator
 from evalml.problem_types import ProblemTypes
 from evalml.utils import (
-    _convert_woodwork_types_wrapper,
     get_random_state,
     infer_feature_types
 )

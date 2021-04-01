@@ -7,7 +7,6 @@ from evalml.data_checks import (
 )
 from evalml.problem_types import handle_problem_types, is_multiclass
 from evalml.utils.woodwork_utils import (
-    _convert_woodwork_types_wrapper,
     infer_feature_types
 )
 

@@ -46,7 +46,6 @@ from evalml.pipelines import (
 )
 from evalml.problem_types import ProblemTypes
 from evalml.utils import (
-    _convert_woodwork_types_wrapper,
     get_random_state,
     infer_feature_types
 )
@@ -809,7 +808,6 @@ def test_graph_prediction_vs_actual_over_time():
 
         def predict(self, X, y):
             y = infer_feature_types(y)
-            y = _convert_woodwork_types_wrapper(y)
             preds = y + 10
             preds.index = range(100, 161)
             return preds

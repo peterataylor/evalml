@@ -8,7 +8,6 @@ from evalml.data_checks import (
     DataCheckWarning
 )
 from evalml.utils.woodwork_utils import (
-    _convert_woodwork_types_wrapper,
     infer_feature_types,
     numeric_and_boolean_ww
 )

@@ -11,7 +11,7 @@ from evalml.model_understanding.prediction_explanations._report_creator_factory 
     _report_creator_factory
 )
 from evalml.problem_types import ProblemTypes, is_regression, is_time_series
-from evalml.utils import _convert_woodwork_types_wrapper, infer_feature_types
+from evalml.utils import infer_feature_types
 from evalml.utils.gen_utils import drop_rows_with_nans
 
 # Container for all of the pipeline-related data we need to create reports. Helps standardize APIs of report makers.
@@ -45,7 +45,6 @@ def explain_predictions(pipeline, input_features, y, indices_to_explain, top_k_f
         ValueError: if the requested index falls outside the input_feature's boundaries.
     """
     input_features = infer_feature_types(input_features)
-    input_features = _convert_woodwork_types_wrapper(input_features)
 
     if pipeline.model_family == ModelFamily.ENSEMBLE:
         raise ValueError("Cannot explain predictions for a stacked ensemble pipeline")
@@ -98,9 +97,7 @@ def explain_predictions_best_worst(pipeline, input_features, y_true, num_to_expl
         ValueError: if an output_format outside of "text", "dict" or "dataframe is provided.
     """
     input_features = infer_feature_types(input_features)
-    input_features = _convert_woodwork_types_wrapper(input_features)
     y_true = infer_feature_types(y_true)
-    y_true = _convert_woodwork_types_wrapper(y_true)
 
     if not (input_features.shape[0] >= num_to_explain * 2):
         raise ValueError(f"Input features must be a dataframe with more than {num_to_explain * 2} rows! "

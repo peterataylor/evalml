@@ -3,7 +3,6 @@ import pandas as pd
 from evalml.exceptions import MethodPropertyNotFoundError
 from evalml.pipelines.components.transformers import Transformer
 from evalml.utils import (
-    _convert_woodwork_types_wrapper,
     _retain_custom_types_and_initalize_woodwork,
     infer_feature_types
 )

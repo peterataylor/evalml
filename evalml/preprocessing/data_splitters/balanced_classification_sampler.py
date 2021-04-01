@@ -2,7 +2,6 @@ import numpy as np
 
 from evalml.preprocessing.data_splitters.sampler_base import SamplerBase
 from evalml.utils.woodwork_utils import (
-    _convert_woodwork_types_wrapper,
     infer_feature_types
 )
 
@@ -77,8 +76,7 @@ class BalancedClassificationSampler(SamplerBase):
         Returns:
             list: Indices to keep for training data
         """
-        y_ww = infer_feature_types(y)
-        y = _convert_woodwork_types_wrapper(y_ww)
+        y = infer_feature_types(y)
         result = self._find_ideal_samples(y)
         indices_to_drop = []
         if len(result):
