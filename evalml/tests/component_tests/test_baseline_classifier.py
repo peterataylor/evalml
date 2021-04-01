@@ -37,7 +37,7 @@ def test_baseline_binary_mode(data_type, make_data_type):
     fitted = clf.fit(X, y)
     assert isinstance(fitted, BaselineClassifier)
     assert clf.classes_ == [10, 11]
-    expected_predictions = pd.Series(np.array([10] * X.shape[0]), dtype="Int64")
+    expected_predictions = pd.Series(np.array([10] * X.shape[0]), dtype="int64")
     predictions = clf.predict(X)
     assert_series_equal(expected_predictions, predictions)
 
@@ -56,7 +56,7 @@ def test_baseline_binary_random(X_y_binary):
     clf.fit(X, y)
     assert clf.classes_ == [0, 1]
 
-    expected_predictions = pd.Series(get_random_state(0).choice(np.unique(y), len(X)), dtype="Int64")
+    expected_predictions = pd.Series(get_random_state(0).choice(np.unique(y), len(X)), dtype="int64")
     predictions = clf.predict(X)
     assert_series_equal(expected_predictions, predictions)
 
@@ -78,7 +78,7 @@ def test_baseline_binary_random_weighted(X_y_binary):
     clf.fit(X, y)
 
     assert clf.classes_ == [0, 1]
-    expected_predictions = pd.Series(get_random_state(0).choice(np.unique(y), len(X), p=percent_freq), dtype="Int64")
+    expected_predictions = pd.Series(get_random_state(0).choice(np.unique(y), len(X), p=percent_freq), dtype="int64")
     predictions = clf.predict(X)
     assert_series_equal(expected_predictions, predictions)
 
@@ -98,7 +98,7 @@ def test_baseline_multiclass_mode():
 
     assert clf.classes_ == [10, 11, 12]
     predictions = clf.predict(X)
-    expected_predictions = pd.Series([11] * len(X), dtype="Int64")
+    expected_predictions = pd.Series([11] * len(X), dtype="int64")
     assert_series_equal(expected_predictions, predictions)
 
     predicted_proba = clf.predict_proba(X)
@@ -116,7 +116,7 @@ def test_baseline_multiclass_random(X_y_multi):
     clf.fit(X, y)
 
     assert clf.classes_ == [0, 1, 2]
-    expected_predictions = pd.Series(get_random_state(0).choice(np.unique(y), len(X)), dtype="Int64")
+    expected_predictions = pd.Series(get_random_state(0).choice(np.unique(y), len(X)), dtype="int64")
     predictions = clf.predict(X)
     assert_series_equal(expected_predictions, predictions)
 
@@ -135,7 +135,7 @@ def test_baseline_multiclass_random_weighted(X_y_multi):
     clf.fit(X, y)
 
     assert clf.classes_ == [0, 1, 2]
-    expected_predictions = pd.Series(get_random_state(0).choice(np.unique(y), len(X), p=percent_freq), dtype="Int64")
+    expected_predictions = pd.Series(get_random_state(0).choice(np.unique(y), len(X), p=percent_freq), dtype="int64")
     predictions = clf.predict(X)
     assert_series_equal(expected_predictions, predictions)
 
@@ -153,7 +153,7 @@ def test_baseline_no_mode():
     clf.fit(X, y)
 
     assert clf.classes_ == [0, 1, 2]
-    expected_predictions = pd.Series([0] * len(X), dtype="Int64")
+    expected_predictions = pd.Series([0] * len(X), dtype="int64")
     predictions = clf.predict(X)
     assert_series_equal(expected_predictions, predictions)
 

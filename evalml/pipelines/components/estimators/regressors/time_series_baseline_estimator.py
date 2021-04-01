@@ -57,7 +57,6 @@ class TimeSeriesBaselineEstimator(Estimator):
         if y is None:
             raise ValueError("Cannot predict Time Series Baseline Estimator if y is None")
         y = infer_feature_types(y)
-        y = _convert_woodwork_types_wrapper(y)
 
         if self.gap == 0:
             y = y.shift(periods=1)
@@ -68,7 +67,6 @@ class TimeSeriesBaselineEstimator(Estimator):
         if y is None:
             raise ValueError("Cannot predict Time Series Baseline Estimator if y is None")
         y = infer_feature_types(y)
-        y = _convert_woodwork_types_wrapper(y)
         preds = self.predict(X, y).dropna(axis=0, how='any').astype('int')
         proba_arr = np.zeros((len(preds), y.max() + 1))
         proba_arr[np.arange(len(preds)), preds] = 1

@@ -1,7 +1,8 @@
 import pandas as pd
 import pytest
 import woodwork as ww
-from woodwork.logical_types import Boolean, Double, Integer
+from woodwork.logical_types import Double
+from evalml import Boolean, Integer
 
 from evalml.exceptions import MethodPropertyNotFoundError
 from evalml.pipelines.components import (

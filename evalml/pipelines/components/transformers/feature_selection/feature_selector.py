@@ -32,7 +32,6 @@ class FeatureSelector(Transformer):
             ww.DataTable: Transformed X
         """
         X_ww = infer_feature_types(X)
-        X = _convert_woodwork_types_wrapper(X_ww)
         self.input_feature_names = list(X.columns.values)
 
         try:
@@ -44,7 +43,7 @@ class FeatureSelector(Transformer):
         selected_col_names = self.get_names()
         col_types = {key: X_dtypes[key] for key in selected_col_names}
         features = pd.DataFrame(X_t, columns=selected_col_names, index=X.index).astype(col_types)
-        return _retain_custom_types_and_initalize_woodwork(X_ww, features)
+        return _retain_custom_types_and_initalize_woodwork(X_ww.ww.logical_types, features)
 
     def fit_transform(self, X, y=None):
         return self.fit(X, y).transform(X, y)
