@@ -4,8 +4,8 @@ import pytest
 import woodwork as ww
 from pandas.testing import assert_frame_equal
 from woodwork.logical_types import Double
-from evalml import Integer
 
+from evalml import Integer
 from evalml.pipelines.components import PCA
 
 

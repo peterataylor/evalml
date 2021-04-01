@@ -1,9 +1,7 @@
 import numpy as np
 
 from evalml.preprocessing.data_splitters.sampler_base import SamplerBase
-from evalml.utils.woodwork_utils import (
-    infer_feature_types
-)
+from evalml.utils.woodwork_utils import infer_feature_types
 
 
 class BalancedClassificationSampler(SamplerBase):

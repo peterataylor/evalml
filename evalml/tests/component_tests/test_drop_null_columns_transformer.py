@@ -3,13 +3,9 @@ import pandas as pd
 import pytest
 import woodwork as ww
 from pandas.testing import assert_frame_equal
-from woodwork.logical_types import (
-    Categorical,
-    Double,
-)
+from woodwork.logical_types import Categorical, Double
 
 from evalml import Boolean, Integer, String
-
 from evalml.pipelines.components import DropNullColumns
 
 

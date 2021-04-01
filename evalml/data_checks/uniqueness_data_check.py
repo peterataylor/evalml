@@ -10,9 +10,7 @@ from evalml.problem_types import (
     is_multiclass,
     is_regression
 )
-from evalml.utils.woodwork_utils import (
-    infer_feature_types
-)
+from evalml.utils.woodwork_utils import infer_feature_types
 
 warning_not_unique_enough = "Input columns ({}) for {} problem type are not unique enough."
 warning_too_unique = "Input columns ({}) for {} problem type are too unique."

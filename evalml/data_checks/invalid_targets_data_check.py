@@ -1,5 +1,6 @@
 import woodwork as ww
 
+from evalml import Integer
 from evalml.data_checks import (
     DataCheck,
     DataCheckError,
@@ -12,7 +13,6 @@ from evalml.utils.woodwork_utils import (
     infer_feature_types,
     numeric_and_boolean_ww
 )
-from evalml import Integer
 
 
 class InvalidTargetDataCheck(DataCheck):

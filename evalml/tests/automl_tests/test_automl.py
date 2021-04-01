@@ -11,6 +11,7 @@ import woodwork as ww
 from sklearn.model_selection import KFold
 from skopt.space import Categorical, Integer, Real
 
+import evalml
 from evalml import AutoMLSearch
 from evalml.automl.callbacks import (
     log_and_save_error_callback,
@@ -1980,7 +1981,7 @@ def test_automl_woodwork_user_types_preserved(mock_binary_fit, mock_binary_score
     X['num col'] = pd.Series(new_col)
     X['text col'] = pd.Series([f"{num}" for num in range(len(new_col))])
     X.ww.init(semantic_tags={'cat col': 'category', 'num col': 'numeric'},
-              logical_types={'cat col': 'Categorical', 'num col': 'Integer', 'text col': 'NaturalLanguage'})
+              logical_types={'cat col': 'Categorical', 'num col': 'Integer', 'text col': 'string'})
     automl = AutoMLSearch(X_train=X, y_train=y, problem_type=problem_type, max_batches=5)
     automl.search()
     for arg in mock_fit.call_args[0]:
@@ -1989,18 +1990,18 @@ def test_automl_woodwork_user_types_preserved(mock_binary_fit, mock_binary_score
             assert arg.ww.semantic_tags['cat col'] == {'category'}
             assert arg.ww.logical_types['cat col'] == ww.logical_types.Categorical
             assert arg.ww.semantic_tags['num col'] == {'numeric'}
-            assert arg.ww.logical_types['num col'] == ww.logical_types.Integer
+            assert arg.ww.logical_types['num col'] == evalml.Integer
             assert arg.ww.semantic_tags['text col'] == set()
-            assert arg.ww.logical_types['text col'] == ww.logical_types.NaturalLanguage
+            assert arg.ww.logical_types['text col'] == evalml.String
     for arg in mock_score.call_args[0]:
         assert isinstance(arg, (pd.DataFrame, pd.Series))
         if isinstance(arg, pd.DataFrame):
             assert arg.ww.semantic_tags['cat col'] == {'category'}
             assert arg.ww.logical_types['cat col'] == ww.logical_types.Categorical
             assert arg.ww.semantic_tags['num col'] == {'numeric'}
-            assert arg.ww.logical_types['num col'] == ww.logical_types.Integer
+            assert arg.ww.logical_types['num col'] == evalml.Integer
             assert arg.ww.semantic_tags['text col'] == set()
-            assert arg.ww.logical_types['text col'] == ww.logical_types.NaturalLanguage
+            assert arg.ww.logical_types['text col'] == evalml.String
 
 
 def test_automl_validates_problem_configuration(X_y_binary):

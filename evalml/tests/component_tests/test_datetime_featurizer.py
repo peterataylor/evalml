@@ -9,8 +9,8 @@ from woodwork.logical_types import (
     Double,
     NaturalLanguage
 )
-from evalml import Integer, String
 
+from evalml import Integer, String
 from evalml.pipelines.components import DateTimeFeaturizer
 
 

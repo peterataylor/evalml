@@ -4,10 +4,7 @@ import pandas as pd
 from evalml.model_family import ModelFamily
 from evalml.pipelines.components.estimators import Estimator
 from evalml.problem_types import ProblemTypes
-from evalml.utils import (
-    infer_feature_types,
-    pad_with_nans
-)
+from evalml.utils import infer_feature_types, pad_with_nans
 
 
 class TimeSeriesBaselineEstimator(Estimator):

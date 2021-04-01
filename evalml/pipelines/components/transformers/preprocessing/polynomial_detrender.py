@@ -3,10 +3,7 @@ import woodwork as ww
 from skopt.space import Integer
 
 from evalml.pipelines.components.transformers.transformer import Transformer
-from evalml.utils import (
-    import_or_raise,
-    infer_feature_types
-)
+from evalml.utils import import_or_raise, infer_feature_types
 
 
 class PolynomialDetrender(Transformer):

@@ -1,7 +1,7 @@
 import json
 
 from woodwork import logical_types
-from evalml import Integer, Boolean
+
 from .binary_classification_pipeline import BinaryClassificationPipeline
 from .multiclass_classification_pipeline import (
     MulticlassClassificationPipeline
@@ -13,6 +13,7 @@ from .time_series_classification_pipelines import (
 )
 from .time_series_regression_pipeline import TimeSeriesRegressionPipeline
 
+from evalml import Boolean, Integer
 from evalml.data_checks import DataCheckActionCode
 from evalml.model_family import ModelFamily
 from evalml.pipelines import PipelineBase

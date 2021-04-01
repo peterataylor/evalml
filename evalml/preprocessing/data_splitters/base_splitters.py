@@ -3,9 +3,7 @@ from sklearn.model_selection import StratifiedKFold, train_test_split
 from sklearn.model_selection._split import BaseCrossValidator
 
 from evalml.utils import _convert_numeric_dataset_pandas
-from evalml.utils.woodwork_utils import (
-    infer_feature_types
-)
+from evalml.utils.woodwork_utils import infer_feature_types
 
 
 class BaseSamplingSplitter(BaseCrossValidator):

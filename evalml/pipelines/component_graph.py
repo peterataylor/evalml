@@ -5,10 +5,7 @@ from networkx.exception import NetworkXUnfeasible
 
 from evalml.pipelines.components import ComponentBase, Estimator, Transformer
 from evalml.pipelines.components.utils import handle_component_class
-from evalml.utils import (
-    import_or_raise,
-    infer_feature_types
-)
+from evalml.utils import import_or_raise, infer_feature_types
 
 
 class ComponentGraph:

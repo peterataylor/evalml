@@ -1,5 +1,6 @@
-import pandas as pd
 import copy
+
+import pandas as pd
 from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
 from woodwork import logical_types
 

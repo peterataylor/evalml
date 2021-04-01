@@ -45,10 +45,7 @@ from evalml.pipelines import (
     RegressionPipeline
 )
 from evalml.problem_types import ProblemTypes
-from evalml.utils import (
-    get_random_state,
-    infer_feature_types
-)
+from evalml.utils import get_random_state, infer_feature_types
 
 
 @pytest.fixture

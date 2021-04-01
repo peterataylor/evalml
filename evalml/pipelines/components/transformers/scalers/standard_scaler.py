@@ -2,12 +2,12 @@ import pandas as pd
 from sklearn.preprocessing import StandardScaler as SkScaler
 from woodwork.logical_types import Categorical
 
+from evalml import Boolean, Integer
 from evalml.pipelines.components.transformers import Transformer
 from evalml.utils import (
     _retain_custom_types_and_initalize_woodwork,
     infer_feature_types
 )
-from evalml import Integer, Boolean
 
 
 class StandardScaler(Transformer):

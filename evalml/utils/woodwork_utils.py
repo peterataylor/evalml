@@ -3,8 +3,8 @@ import numpy as np
 import pandas as pd
 import woodwork as ww
 
+from evalml import Boolean, Integer
 from evalml.utils.gen_utils import is_all_numeric
-from evalml import Integer, Boolean
 
 numeric_and_boolean_ww = [Integer, ww.logical_types.Double, Boolean]
 
@@ -104,6 +104,4 @@ def _convert_numeric_dataset_pandas(X, y):
     if not is_all_numeric(X_ww):
         raise ValueError('Values not all numeric or there are null values provided in the dataset')
     y_ww = infer_feature_types(y)
-    X_ww = _convert_woodwork_types_wrapper(X_ww)
-    y_ww = _convert_woodwork_types_wrapper(y_ww)
     return X_ww, y_ww

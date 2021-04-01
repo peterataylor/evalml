@@ -6,9 +6,7 @@ from evalml.data_checks import (
     DataCheckWarning
 )
 from evalml.problem_types import handle_problem_types, is_multiclass
-from evalml.utils.woodwork_utils import (
-    infer_feature_types
-)
+from evalml.utils.woodwork_utils import infer_feature_types
 
 warning_too_unique = "Input columns ({}) for {} problem type are too sparse."
 

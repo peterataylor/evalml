@@ -6,13 +6,9 @@ import pytest
 import woodwork as ww
 from pandas.testing import assert_frame_equal
 from pytest import importorskip
-from woodwork.logical_types import (
-    Categorical,
-    Datetime,
-    Double,
-)
-from evalml import Integer, Boolean, String
+from woodwork.logical_types import Categorical, Datetime, Double
 
+from evalml import Boolean, Integer, String
 from evalml.exceptions import ComponentNotYetFittedError
 from evalml.pipelines.components import TargetEncoder
 

@@ -3,19 +3,12 @@ import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
 from woodwork.exceptions import TypeConversionError
-from woodwork.logical_types import (
-    Categorical,
-    Datetime,
-    Double,
-)
-from evalml import Integer, String, Boolean
+from woodwork.logical_types import Categorical, Datetime, Double
 
+from evalml import Boolean, Integer, String
 from evalml.exceptions import ComponentNotYetFittedError
 from evalml.pipelines.components import OneHotEncoder
-from evalml.utils import (
-    get_random_seed,
-    infer_feature_types
-)
+from evalml.utils import get_random_seed, infer_feature_types
 
 
 def test_init():

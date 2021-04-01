@@ -8,10 +8,7 @@ from evalml.exceptions import MissingComponentError
 from evalml.model_family.utils import handle_model_family
 from evalml.pipelines.components import ComponentBase, Estimator, Transformer
 from evalml.problem_types import ProblemTypes, handle_problem_types
-from evalml.utils import (
-    get_importable_subclasses,
-    get_logger
-)
+from evalml.utils import get_importable_subclasses, get_logger
 
 logger = get_logger(__file__)
 
