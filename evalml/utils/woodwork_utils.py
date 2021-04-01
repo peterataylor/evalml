@@ -76,16 +76,6 @@ def _retain_custom_types_and_initalize_woodwork(old_logical_types, new_dataframe
         ltypes_to_ignore = []
     col_intersection = set(old_logical_types.keys()).intersection(set(new_dataframe.columns))
     retained_logical_types = {col: ltype for col, ltype in old_logical_types.items() if col in col_intersection and ltype not in ltypes_to_ignore}
-    # retained_logical_types = {}
-    # for col in col_intersection:
-    #     if logical_types[col] in ltypes_to_ignore:
-    #         continue
-    #     if str(new_dataframe[col].dtype) != logical_types[col].primary_dtype:
-    #         try:
-    #             new_dataframe[col].astype(logical_types[col].primary_dtype)
-    #             retained_logical_types[col] = logical_types[col]
-    #         except (ValueError, TypeError):
-    #             pass
     new_dataframe.ww.init(logical_types=retained_logical_types)
     return new_dataframe
 
