@@ -1,7 +1,7 @@
 import json
 
 from woodwork import logical_types
-
+from evalml import Integer, Boolean
 from .binary_classification_pipeline import BinaryClassificationPipeline
 from .multiclass_classification_pipeline import (
     MulticlassClassificationPipeline
@@ -62,11 +62,11 @@ def _get_preprocessing_components(X, y, problem_type, estimator_class):
     if len(all_null_cols) > 0:
         pp_components.append(DropNullColumns)
     input_logical_types = set(X.ww.logical_types.values())
-    types_imputer_handles = {logical_types.Boolean, logical_types.Categorical, logical_types.Double, logical_types.Integer}
+    types_imputer_handles = {Boolean, logical_types.Categorical, logical_types.Double, Integer}
     if len(input_logical_types.intersection(types_imputer_handles)) > 0:
         pp_components.append(Imputer)
 
-    text_columns = list(X.ww.select('natural_language').columns)
+    text_columns = list(X.ww.select('string').columns)
     if len(text_columns) > 0:
         pp_components.append(TextFeaturizer)
 

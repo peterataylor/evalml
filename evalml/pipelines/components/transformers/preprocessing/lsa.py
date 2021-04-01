@@ -32,6 +32,7 @@ class LSA(TextTransformer):
     def fit(self, X, y=None):
         X = infer_feature_types(X)
         self._text_columns = self._get_text_columns(X)
+
         if len(self._text_columns) == 0:
             return self
         corpus = X[self._text_columns].values.flatten()
@@ -57,9 +58,9 @@ class LSA(TextTransformer):
 
         provenance = {}
         for col in self._text_columns:
-            transformed = self._lsa_pipeline.transform(X[col])
-            X_ww.ww['LSA({})[0]'.format(col)] = pd.Series(transformed[:, 0], index=X.index)
-            X_ww.ww['LSA({})[1]'.format(col)] = pd.Series(transformed[:, 1], index=X.index)
+            transformed = self._lsa_pipeline.transform(X_ww[col].astype(str))
+            X_ww.ww['LSA({})[0]'.format(col)] = pd.Series(transformed[:, 0], index=X_ww.index)
+            X_ww.ww['LSA({})[1]'.format(col)] = pd.Series(transformed[:, 1], index=X_ww.index)
             provenance[col] = ['LSA({})[0]'.format(col), 'LSA({})[1]'.format(col)]
         self._provenance = provenance
 

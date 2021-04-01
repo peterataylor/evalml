@@ -58,5 +58,5 @@ class PCA(Transformer):
         if not is_all_numeric(X_ww):
             raise ValueError("PCA input must be all numeric")
         X_t = self._component_obj.fit_transform(X, y)
-        X_t = pd.DataFrame(X_t, index=X.index, columns=[f"component_{i}" for i in range(X_t.shape[1])])
+        X_t = pd.DataFrame(X_t, index=X_ww.index, columns=[f"component_{i}" for i in range(X_t.shape[1])])
         return _retain_custom_types_and_initalize_woodwork(X_ww, X_t)

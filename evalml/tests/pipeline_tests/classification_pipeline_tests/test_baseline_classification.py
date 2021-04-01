@@ -16,7 +16,7 @@ def test_baseline_binary_random(X_y_binary):
     }
     clf = BaselineBinaryPipeline(parameters=parameters)
     clf.fit(X, y)
-    expected_predictions = pd.Series(get_random_state(0).choice(np.unique(y), len(X)), dtype="Int64")
+    expected_predictions = pd.Series(get_random_state(0).choice(np.unique(y), len(X)), dtype="int64")
     assert_series_equal(expected_predictions, clf.predict(X))
 
     predicted_proba = clf.predict_proba(X)
@@ -41,7 +41,7 @@ def test_baseline_binary_random_weighted(X_y_binary):
     clf = BaselineBinaryPipeline(parameters=parameters)
     clf.fit(X, y)
 
-    expected_predictions = pd.Series(get_random_state(0).choice(np.unique(y), len(X), p=percent_freq), dtype="Int64")
+    expected_predictions = pd.Series(get_random_state(0).choice(np.unique(y), len(X), p=percent_freq), dtype="int64")
     assert_series_equal(expected_predictions, clf.predict(X))
 
     expected_predictions_proba = pd.DataFrame(np.array([[percent_freq[i] for i in range(len(values))]] * len(X)))
@@ -63,7 +63,7 @@ def test_baseline_binary_mode():
     clf = BaselineBinaryPipeline(parameters=parameters)
     clf.fit(X, y)
 
-    expected_predictions = pd.Series(np.array([10] * len(X)), dtype="Int64")
+    expected_predictions = pd.Series(np.array([10] * len(X)), dtype="int64")
     assert_series_equal(expected_predictions, clf.predict(X))
 
     predicted_proba = clf.predict_proba(X)
@@ -85,7 +85,7 @@ def test_baseline_multi_random(X_y_multi):
     clf = BaselineMulticlassPipeline(parameters=parameters)
     clf.fit(X, y)
 
-    expected_predictions = pd.Series(get_random_state(0).choice(np.unique(y), len(X)), dtype="Int64")
+    expected_predictions = pd.Series(get_random_state(0).choice(np.unique(y), len(X)), dtype="int64")
     assert_series_equal(expected_predictions, clf.predict(X))
 
     predicted_proba = clf.predict_proba(X)
@@ -109,7 +109,7 @@ def test_baseline_multi_random_weighted(X_y_multi):
     clf = BaselineMulticlassPipeline(parameters=parameters)
     clf.fit(X, y)
 
-    expected_predictions = pd.Series(get_random_state(0).choice(np.unique(y), len(X), p=percent_freq), dtype="Int64")
+    expected_predictions = pd.Series(get_random_state(0).choice(np.unique(y), len(X), p=percent_freq), dtype="int64")
     assert_series_equal(expected_predictions, clf.predict(X))
 
     predicted_proba = clf.predict_proba(X)
@@ -130,7 +130,7 @@ def test_baseline_multi_mode():
     }
     clf = BaselineMulticlassPipeline(parameters=parameters)
     clf.fit(X, y)
-    expected_predictions = pd.Series(np.array([11] * len(X)), dtype="Int64")
+    expected_predictions = pd.Series(np.array([11] * len(X)), dtype="int64")
     assert_series_equal(expected_predictions, clf.predict(X))
 
     predicted_proba = clf.predict_proba(X)

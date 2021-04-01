@@ -82,7 +82,7 @@ class PerColumnImputer(Transformer):
         original_ltypes = copy.deepcopy(X_ww.ww.logical_types)
         cols_to_drop = []
         for column, imputer in self.imputers.items():
-            transformed = imputer.transform(X[[column]])
+            transformed = imputer.transform(X_ww[[column]])
             if transformed.empty:
                 cols_to_drop.append(column)
             else:

@@ -25,7 +25,7 @@ def test_time_series_baseline(mock_decode, pipeline_class, gap, X_none, ts_data)
     expected_y = y.shift(1) if gap == 0 else y
     expected_y = expected_y.reset_index(drop=True)
     if not expected_y.isnull().values.any():
-        expected_y = expected_y.astype("Int64")
+        expected_y = expected_y.astype("int64")
     if X_none:
         X = None
     clf.fit(X, y)

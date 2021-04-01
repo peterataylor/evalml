@@ -9,7 +9,6 @@ from evalml.model_family import ModelFamily
 from evalml.pipelines.components.estimators import Estimator
 from evalml.problem_types import ProblemTypes
 from evalml.utils import (
-    _convert_woodwork_types_wrapper,
     import_or_raise,
     infer_feature_types
 )
@@ -69,7 +68,6 @@ class CatBoostClassifier(Estimator):
 
     def predict(self, X):
         X = infer_feature_types(X)
-        X = _convert_woodwork_types_wrapper(X)
         predictions = self._component_obj.predict(X)
         if predictions.ndim == 2 and predictions.shape[1] == 1:
             predictions = predictions.flatten()

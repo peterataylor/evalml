@@ -67,7 +67,7 @@ class TargetEncoder(Transformer, metaclass=OneHotEncoderMeta):
         if y is not None:
             y = infer_feature_types(y)
         X_t = self._component_obj.transform(X, y)
-        X_t_df = pd.DataFrame(X_t, columns=X.columns, index=X.index)
+        X_t_df = pd.DataFrame(X_t, columns=X_ww.columns, index=X_ww.index)
         return _retain_custom_types_and_initalize_woodwork(X_ww.ww.logical_types, X_t_df, ltypes_to_ignore=[Categorical])
 
     def fit_transform(self, X, y):

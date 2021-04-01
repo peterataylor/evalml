@@ -1,13 +1,11 @@
 import networkx as nx
 import pandas as pd
-import woodwork as ww
 from networkx.algorithms.dag import topological_sort
 from networkx.exception import NetworkXUnfeasible
 
 from evalml.pipelines.components import ComponentBase, Estimator, Transformer
 from evalml.pipelines.components.utils import handle_component_class
 from evalml.utils import (
-    _convert_woodwork_types_wrapper,
     import_or_raise,
     infer_feature_types
 )
@@ -93,7 +91,6 @@ class ComponentGraph:
             y (ww.DataColumn, pd.Series): The target training data of length [n_samples]
         """
         X = infer_feature_types(X)
-        X = _convert_woodwork_types_wrapper(X)
         self._compute_features(self.compute_order, X, y, fit=True)
         self._feature_provenance = self._get_feature_provenance(X.columns)
         return self
@@ -195,10 +192,8 @@ class ComponentGraph:
                     y_input = output_cache[parent_input]
                 else:
                     parent_x = output_cache.get(parent_input, output_cache.get(f'{parent_input}.x'))
-                    if isinstance(parent_x, pd.DataFrame):
-                        parent_x = _convert_woodwork_types_wrapper(parent_x)
-                    elif isinstance(parent_x, pd.Series):
-                        parent_x = pd.Series(_convert_woodwork_types_wrapper(parent_x), name=parent_input)
+                    if isinstance(parent_x, pd.Series):
+                        parent_x = pd.Series(parent_x, name=parent_input)
                     x_inputs.append(parent_x)
             input_x, input_y = self._consolidate_inputs(x_inputs, y_input, X, y)
             self.input_feature_names.update({component_name: list(input_x.columns)})

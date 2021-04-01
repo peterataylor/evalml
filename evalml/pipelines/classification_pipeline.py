@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
 from evalml.pipelines import PipelineBase
-from evalml.utils import _convert_woodwork_types_wrapper, infer_feature_types
+from evalml.utils import infer_feature_types
 
 
 class ClassificationPipeline(PipelineBase):
@@ -38,7 +38,6 @@ class ClassificationPipeline(PipelineBase):
         """
         X = infer_feature_types(X)
         y = infer_feature_types(y)
-        y = _convert_woodwork_types_wrapper(y)
         self._encoder.fit(y)
         y = self._encode_targets(y)
         self._fit(X, y)
@@ -117,14 +116,9 @@ class ClassificationPipeline(PipelineBase):
             dict: Ordered dictionary of objective scores
         """
         y = infer_feature_types(y)
-        y = _convert_woodwork_types_wrapper(y)
         objectives = self.create_objectives(objectives)
         y = self._encode_targets(y)
         y_predicted, y_predicted_proba = self._compute_predictions(X, y, objectives)
-        if y_predicted is not None:
-            y_predicted = _convert_woodwork_types_wrapper(y_predicted)
-        if y_predicted_proba is not None:
-            y_predicted_proba = _convert_woodwork_types_wrapper(y_predicted_proba)
         return self._score_all_objectives(X, y, y_predicted, y_predicted_proba, objectives)
 
     def _compute_predictions(self, X, y, objectives, time_series=False):
