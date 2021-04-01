@@ -3,7 +3,8 @@ import pandas as pd
 import pytest
 import woodwork as ww
 from pandas.testing import assert_frame_equal, assert_series_equal
-from woodwork.logical_types import Boolean, Categorical, Double, Integer
+from woodwork.logical_types import Categorical, Double
+from evalml import Boolean, Integer
 
 from evalml.pipelines.components import TextFeaturizer
 from evalml.utils import infer_feature_types
@@ -83,7 +84,7 @@ def test_some_missing_col_names(text_df, caplog):
 
 def test_empty_text_column():
     X = pd.DataFrame({'col_1': []})
-    X = infer_feature_types(X, {'col_1': 'NaturalLanguage'})
+    X = infer_feature_types(X, {'col_1': 'String'})
     tf = TextFeaturizer()
     with pytest.raises(ValueError, match="empty vocabulary; perhaps the documents only contain stop words"):
         tf.fit(X)
@@ -100,7 +101,7 @@ def test_invalid_text_column():
             np.nan,
             None,
             'I\'m happy again!!! lalalalalalalalalalala']})
-    X = infer_feature_types(X, {'col_1': 'NaturalLanguage'})
+    X = infer_feature_types(X, {'col_1': 'String'})
     tf = TextFeaturizer()
     tf.fit(X)
 

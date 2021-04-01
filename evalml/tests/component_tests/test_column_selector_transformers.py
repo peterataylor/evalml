@@ -39,14 +39,14 @@ def test_column_transformer_empty_X(class_to_test):
 
 
 @pytest.mark.parametrize("class_to_test,checking_functions",
-                         [(DropColumns, [lambda X, X_t: X_t.equals(X.astype("Int64")),
-                                         lambda X, X_t: X_t.equals(X.astype("Int64")),
-                                         lambda X, X_t: X_t.equals(X.drop(columns=["one"]).astype("Int64")),
+                         [(DropColumns, [lambda X, X_t: X_t.equals(X.astype("int64")),
+                                         lambda X, X_t: X_t.equals(X.astype("int64")),
+                                         lambda X, X_t: X_t.equals(X.drop(columns=["one"]).astype("int64")),
                                          lambda X, X_t: X_t.empty]),
                           (SelectColumns, [lambda X, X_t: X_t.empty,
                                            lambda X, X_t: X_t.empty,
-                                           lambda X, X_t: X_t.equals(X[["one"]].astype("Int64")),
-                                           lambda X, X_t: X_t.equals(X.astype("Int64"))])
+                                           lambda X, X_t: X_t.equals(X[["one"]].astype("int64")),
+                                           lambda X, X_t: X_t.equals(X.astype("int64"))])
                           ])
 def test_column_transformer_transform(class_to_test, checking_functions):
     X = pd.DataFrame({'one': [1, 2, 3, 4], 'two': [2, 3, 4, 5], 'three': [1, 2, 3, 4]})
@@ -66,12 +66,12 @@ def test_column_transformer_transform(class_to_test, checking_functions):
 
 
 @pytest.mark.parametrize("class_to_test,checking_functions",
-                         [(DropColumns, [lambda X, X_t: X_t.equals(X.astype("Int64")),
-                                         lambda X, X_t: X_t.equals(X.drop(columns=["one"]).astype("Int64")),
+                         [(DropColumns, [lambda X, X_t: X_t.equals(X.astype("int64")),
+                                         lambda X, X_t: X_t.equals(X.drop(columns=["one"]).astype("int64")),
                                          lambda X, X_t: X_t.empty]),
                           (SelectColumns, [lambda X, X_t: X_t.empty,
-                                           lambda X, X_t: X_t.equals(X[["one"]].astype("Int64")),
-                                           lambda X, X_t: X_t.equals(X.astype("Int64"))])
+                                           lambda X, X_t: X_t.equals(X[["one"]].astype("int64")),
+                                           lambda X, X_t: X_t.equals(X.astype("int64"))])
                           ])
 def test_column_transformer_fit_transform(class_to_test, checking_functions):
     X = pd.DataFrame({'one': [1, 2, 3, 4], 'two': [2, 3, 4, 5], 'three': [1, 2, 3, 4]})
@@ -106,11 +106,11 @@ def test_drop_column_transformer_input_invalid_col_name(class_to_test):
 
 
 @pytest.mark.parametrize("class_to_test,answers",
-                         [(DropColumns, [pd.DataFrame([[0, 2, 3], [4, 6, 7], [8, 10, 11]], columns=[0, 2, 3], dtype="Int64"),
+                         [(DropColumns, [pd.DataFrame([[0, 2, 3], [4, 6, 7], [8, 10, 11]], columns=[0, 2, 3], dtype="int64"),
                                          pd.DataFrame([[], [], []], dtype="Int64"),
-                                         pd.DataFrame(np.arange(12).reshape(3, 4), dtype="Int64")]),
-                          (SelectColumns, [pd.DataFrame([[1], [5], [9]], columns=[1], dtype="Int64"),
-                                           pd.DataFrame(np.arange(12).reshape(3, 4), dtype="Int64"),
+                                         pd.DataFrame(np.arange(12).reshape(3, 4), dtype="int64")]),
+                          (SelectColumns, [pd.DataFrame([[1], [5], [9]], columns=[1], dtype="int64"),
+                                           pd.DataFrame(np.arange(12).reshape(3, 4), dtype="int64"),
                                            pd.DataFrame([[], [], []], dtype="Int64")])
                           ])
 def test_column_transformer_int_col_names_np_array(class_to_test, answers):

@@ -4,12 +4,11 @@ import pytest
 import woodwork as ww
 from pandas.testing import assert_frame_equal
 from woodwork.logical_types import (
-    Boolean,
     Categorical,
     Double,
-    Integer,
-    NaturalLanguage
 )
+
+from evalml import Boolean, Integer, String
 
 from evalml.pipelines.components import DropNullColumns
 
@@ -38,7 +37,7 @@ def test_drop_null_transformer_transform_default_pct_null_threshold():
     drop_null_transformer = DropNullColumns()
     X = pd.DataFrame({'lots_of_null': [None, None, None, None, 5],
                       'no_null': [1, 2, 3, 4, 5]})
-    X_expected = X.astype({'lots_of_null': 'float64', 'no_null': 'Int64'})
+    X_expected = X.astype({'lots_of_null': 'float64', 'no_null': 'int64'})
     drop_null_transformer.fit(X)
     X_t = drop_null_transformer.transform(X)
     assert_frame_equal(X_expected, X_t)
@@ -51,7 +50,7 @@ def test_drop_null_transformer_transform_custom_pct_null_threshold():
 
     drop_null_transformer = DropNullColumns(pct_null_threshold=0.5)
     X_expected = X.drop(["lots_of_null", "all_null"], axis=1)
-    X_expected = X_expected.astype({"no_null": "Int64"})
+    X_expected = X_expected.astype({"no_null": "int64"})
     drop_null_transformer.fit(X)
     X_t = drop_null_transformer.transform(X)
     assert_frame_equal(X_expected, X_t)
@@ -84,7 +83,7 @@ def test_drop_null_transformer_fit_transform():
     drop_null_transformer = DropNullColumns()
     X = pd.DataFrame({'lots_of_null': [None, None, None, None, 5],
                       'no_null': [1, 2, 3, 4, 5]})
-    X_expected = X.astype({'lots_of_null': 'float64', 'no_null': 'Int64'})
+    X_expected = X.astype({'lots_of_null': 'float64', 'no_null': 'int64'})
     X_t = drop_null_transformer.fit_transform(X)
     assert_frame_equal(X_expected, X_t)
 
@@ -93,7 +92,7 @@ def test_drop_null_transformer_fit_transform():
                       'no_null': [1, 2, 3, 4, 5]})
     drop_null_transformer = DropNullColumns(pct_null_threshold=0.5)
     X_expected = X.drop(["lots_of_null", "all_null"], axis=1)
-    X_expected = X_expected.astype({'no_null': 'Int64'})
+    X_expected = X_expected.astype({'no_null': 'int64'})
     X_t = drop_null_transformer.fit_transform(X)
     assert_frame_equal(X_expected, X_t)
     # check that X is untouched
@@ -141,7 +140,7 @@ def test_drop_null_transformer_woodwork_custom_overrides_returned_by_components(
     y = pd.Series([1, 2, 1])
     if has_nan:
         X_df['all null'] = [np.nan, np.nan, np.nan]
-    override_types = [Integer, Double, Categorical, NaturalLanguage, Boolean]
+    override_types = [Integer, Double, Categorical, String, Boolean]
     for logical_type in override_types:
         try:
             X = X_df

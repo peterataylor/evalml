@@ -4,12 +4,10 @@ import pytest
 import woodwork as ww
 from pandas.testing import assert_frame_equal
 from woodwork.logical_types import (
-    Boolean,
     Categorical,
     Double,
-    Integer,
-    NaturalLanguage
 )
+from evalml import Boolean, Integer, String
 
 from evalml.pipelines.components import LSA
 from evalml.utils import infer_feature_types
@@ -164,7 +162,7 @@ def test_lsa_with_custom_indices(text_df):
                                   pd.DataFrame(pd.Series(['this will be a natural language column because length', 'yay', 'hay'], dtype="string"))])
 def test_lsa_woodwork_custom_overrides_returned_by_components(X_df):
     y = pd.Series([1, 2, 1])
-    override_types = [Integer, Double, Categorical, Boolean, NaturalLanguage]
+    override_types = [Integer, Double, Categorical, Boolean, String]
     X_df['text col'] = pd.Series(['this will be a natural language column because length', 'yay', 'hay'], dtype="string")
     lsa = LSA()
     for logical_type in override_types:
@@ -177,7 +175,7 @@ def test_lsa_woodwork_custom_overrides_returned_by_components(X_df):
         lsa.fit(X)
         transformed = lsa.transform(X, y)
         assert isinstance(transformed, pd.DataFrame)
-        if logical_type == NaturalLanguage:
+        if logical_type == String:
             assert transformed.ww.logical_types == {'LSA(0)[0]': Double, 'LSA(0)[1]': Double, 'LSA(text col)[0]': Double, 'LSA(text col)[1]': Double}
         else:
             assert transformed.ww.logical_types == {0: logical_type, 'LSA(text col)[0]': Double, 'LSA(text col)[1]': Double}

@@ -1,4 +1,5 @@
 import pandas as pd
+import copy
 from sklearn.preprocessing import LabelEncoder, OrdinalEncoder
 from woodwork import logical_types
 
@@ -90,15 +91,15 @@ class DelayedFeatureTransformer(Transformer):
             X = pd.DataFrame()
         # Normalize the data into pandas objects
         X_ww = infer_feature_types(X)
+        original_logical_types = copy.deepcopy(X_ww.ww.logical_types)
         categorical_columns = self._get_categorical_columns(X_ww)
-        X = _convert_woodwork_types_wrapper(X_ww)
         if self.delay_features and len(X) > 0:
-            X_categorical = self._encode_X_while_preserving_index(X[categorical_columns])
-            for col_name in X:
-                col = X[col_name]
+            X_categorical = self._encode_X_while_preserving_index(X_ww[categorical_columns])
+            for col_name in X_ww:
+                col = X_ww[col_name]
                 if col_name in categorical_columns:
                     col = X_categorical[col_name]
-                X = X.assign(**{f"{col_name}_delay_{t}": col.shift(t) for t in range(1, self.max_delay + 1)})
+                X_ww = X_ww.assign(**{f"{col_name}_delay_{t}": col.shift(t) for t in range(1, self.max_delay + 1)})
         # Handle cases where the target was passed in
         if self.delay_target and y is not None:
             y = infer_feature_types(y)
@@ -106,10 +107,10 @@ class DelayedFeatureTransformer(Transformer):
                 y = self._encode_y_while_preserving_index(y)
             else:
                 y = _convert_woodwork_types_wrapper(y)
-            X = X.assign(**{f"target_delay_{t}": y.shift(t)
-                            for t in range(self.start_delay_for_target, self.max_delay + 1)})
+            X_ww = X_ww.assign(**{f"target_delay_{t}": y.shift(t)
+                                  for t in range(self.start_delay_for_target, self.max_delay + 1)})
 
-        return _retain_custom_types_and_initalize_woodwork(X_ww, X)
+        return _retain_custom_types_and_initalize_woodwork(original_logical_types, X_ww)
 
     def fit_transform(self, X, y):
         return self.fit(X, y).transform(X, y)

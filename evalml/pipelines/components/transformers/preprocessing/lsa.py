@@ -34,7 +34,6 @@ class LSA(TextTransformer):
         self._text_columns = self._get_text_columns(X)
         if len(self._text_columns) == 0:
             return self
-        X = _convert_woodwork_types_wrapper(X)
         corpus = X[self._text_columns].values.flatten()
         # we assume non-str values will have been filtered out prior to calling LSA.fit. this is a safeguard.
         corpus = corpus.astype(str)
@@ -56,18 +55,16 @@ class LSA(TextTransformer):
         if len(self._text_columns) == 0:
             return X_ww
 
-        X = _convert_woodwork_types_wrapper(X_ww)
-        X_t = X.copy()
         provenance = {}
         for col in self._text_columns:
             transformed = self._lsa_pipeline.transform(X[col])
-            X_t['LSA({})[0]'.format(col)] = pd.Series(transformed[:, 0], index=X.index)
-            X_t['LSA({})[1]'.format(col)] = pd.Series(transformed[:, 1], index=X.index)
+            X_ww.ww['LSA({})[0]'.format(col)] = pd.Series(transformed[:, 0], index=X.index)
+            X_ww.ww['LSA({})[1]'.format(col)] = pd.Series(transformed[:, 1], index=X.index)
             provenance[col] = ['LSA({})[0]'.format(col), 'LSA({})[1]'.format(col)]
         self._provenance = provenance
 
-        X_t = X_t.drop(columns=self._text_columns)
-        return _retain_custom_types_and_initalize_woodwork(X_ww, X_t)
+        X_t = X_ww.ww.drop(columns=self._text_columns)
+        return X_t
 
     def _get_feature_provenance(self):
         return self._provenance
