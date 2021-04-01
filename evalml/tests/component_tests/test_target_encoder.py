@@ -7,13 +7,11 @@ import woodwork as ww
 from pandas.testing import assert_frame_equal
 from pytest import importorskip
 from woodwork.logical_types import (
-    Boolean,
     Categorical,
     Datetime,
     Double,
-    Integer,
-    NaturalLanguage
 )
+from evalml import Integer, Boolean, String
 
 from evalml.exceptions import ComponentNotYetFittedError
 from evalml.pipelines.components import TargetEncoder
@@ -85,7 +83,7 @@ def test_cols():
     X = pd.DataFrame({'col_1': [1, 2, 1, 1, 2],
                       'col_2': ['2', '1', '1', '1', '1'],
                       'col_3': ["a", "a", "a", "a", "a"]})
-    X_expected = X.astype({'col_1': 'Int64', 'col_2': 'category', 'col_3': 'category'})
+    X_expected = X.astype({'col_1': 'int64', 'col_2': 'category', 'col_3': 'category'})
     y = pd.Series([0, 1, 1, 1, 0])
     encoder = TargetEncoder(cols=[])
     encoder.fit(X, y)
@@ -95,7 +93,7 @@ def test_cols():
     encoder = TargetEncoder(cols=['col_2'])
     encoder.fit(X, y)
     X_t = encoder.transform(X)
-    X_expected = pd.DataFrame({'col_1': pd.Series([1, 2, 1, 1, 2], dtype="Int64"),
+    X_expected = pd.DataFrame({'col_1': pd.Series([1, 2, 1, 1, 2], dtype="int64"),
                                'col_2': [0.60000, 0.742886, 0.742886, 0.742886, 0.742886],
                                'col_3': pd.Series(["a", "a", "a", "a", "a"], dtype="category")})
     assert_frame_equal(X_expected, X_t, check_less_precise=True)
@@ -117,7 +115,7 @@ def test_transform():
     encoder = TargetEncoder()
     encoder.fit(X, y)
     X_t = encoder.transform(X)
-    X_expected = pd.DataFrame({'col_1': pd.Series([1, 2, 1, 1, 2], dtype="Int64"),
+    X_expected = pd.DataFrame({'col_1': pd.Series([1, 2, 1, 1, 2], dtype="int64"),
                                'col_2': [0.6, 0.65872, 0.6, 0.65872, 0.65872],
                                'col_3': [0.504743, 0.504743, 0.504743, 0.6, 0.504743]})
     assert_frame_equal(X_expected, X_t)
@@ -132,24 +130,24 @@ def test_smoothing():
     encoder = TargetEncoder(smoothing=1)
     encoder.fit(X, y)
     X_t = encoder.transform(X)
-    X_expected = pd.DataFrame({'col_1': pd.Series([1, 2, 1, 1, 2], dtype="Int64"),
-                               'col_2': pd.Series([2, 1, 1, 1, 1], dtype="Int64"),
+    X_expected = pd.DataFrame({'col_1': pd.Series([1, 2, 1, 1, 2], dtype="int64"),
+                               'col_2': pd.Series([2, 1, 1, 1, 1], dtype="int64"),
                                'col_3': [0.742886, 0.742886, 0.742886, 0.742886, 0.6]})
     assert_frame_equal(X_expected, X_t)
 
     encoder = TargetEncoder(smoothing=10)
     encoder.fit(X, y)
     X_t = encoder.transform(X)
-    X_expected = pd.DataFrame({'col_1': pd.Series([1, 2, 1, 1, 2], dtype="Int64"),
-                               'col_2': pd.Series([2, 1, 1, 1, 1], dtype="Int64"),
+    X_expected = pd.DataFrame({'col_1': pd.Series([1, 2, 1, 1, 2], dtype="int64"),
+                               'col_2': pd.Series([2, 1, 1, 1, 1], dtype="int64"),
                                'col_3': [0.686166, 0.686166, 0.686166, 0.686166, 0.6]})
     assert_frame_equal(X_expected, X_t)
 
     encoder = TargetEncoder(smoothing=100)
     encoder.fit(X, y)
     X_t = encoder.transform(X)
-    X_expected = pd.DataFrame({'col_1': pd.Series([1, 2, 1, 1, 2], dtype="Int64"),
-                               'col_2': pd.Series([2, 1, 1, 1, 1], dtype="Int64"),
+    X_expected = pd.DataFrame({'col_1': pd.Series([1, 2, 1, 1, 2], dtype="int64"),
+                               'col_2': pd.Series([2, 1, 1, 1, 1], dtype="int64"),
                                'col_3': [0.676125, 0.676125, 0.676125, 0.676125, 0.6]})
     assert_frame_equal(X_expected, X_t)
 
@@ -188,7 +186,7 @@ def test_pandas_numpy(mock_fit, X_y_binary):
                                   pd.DataFrame(pd.Series(['this will be a natural language column because length', 'yay', 'hay'], dtype="string"))])
 def test_target_encoder_woodwork_custom_overrides_returned_by_components(X_df):
     y = pd.Series([1, 2, 1])
-    override_types = [Integer, Double, Categorical, NaturalLanguage, Boolean, Datetime]
+    override_types = [Integer, Double, Categorical, String, Boolean, Datetime]
     for logical_type in override_types:
         try:
             X = X_df
