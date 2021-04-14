@@ -43,7 +43,7 @@ def infer_feature_types(data, feature_types=None):
 
     if isinstance(data, pd.Series):
         if data.ww._schema is not None:
-            ww_data = ww.init_series(ww_data, **data.ww._schema)
+            ww_data = ww.init_series(ww_data, logical_type=data.ww.logical_type)
         else:
             ww_data = ww.init_series(ww_data, logical_type=feature_types)
     else:

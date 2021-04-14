@@ -66,7 +66,7 @@ def test_some_missing_col_names(text_df, caplog):
 
 def test_lsa_empty_text_column():
     X = pd.DataFrame({'col_1': []})
-    X = infer_feature_types(X, {'col_1': 'string'})
+    X = infer_feature_types(X, {'col_1': 'NaturalLanguage'})
     lsa = LSA()
     with pytest.raises(ValueError, match="empty vocabulary; perhaps the documents only contain stop words"):
         lsa.fit(X)
@@ -83,7 +83,7 @@ def test_lsa_text_column_with_nonstring_values():
             np.nan,
             None,
             'I\'m happy again!!! lalalalalalalalalalala']})
-    X = infer_feature_types(X, {'col_1': 'string'})
+    X = infer_feature_types(X, {'col_1': 'NaturalLanguage'})
     lsa = LSA()
     lsa.fit(X)
 

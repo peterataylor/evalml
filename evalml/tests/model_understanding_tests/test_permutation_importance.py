@@ -150,7 +150,7 @@ def test_fast_permutation_importance_matches_sklearn_output(mock_supports_fast_i
     X, y = fraud_100
 
     if pipeline_class == LinearPipelineWithTextFeatures:
-        X.ww.set_types(logical_types={'provider': 'string'})
+        X.ww.set_types(logical_types={'provider': 'NaturalLanguage'})
 
     # Do this to make sure we use the same int as sklearn under the hood
     random_state = np.random.RandomState(0)

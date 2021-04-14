@@ -1,36 +1,10 @@
 import warnings
 import woodwork as ww
-from woodwork.logical_types import LogicalType
 
+ww.config.set_option('use_nullable_dtypes', False)
 
-ww.type_system.reset_defaults()
-
-
-class Integer(LogicalType):
-    primary_dtype = 'int64'
-    standard_tags = {'numeric'}
-
-
-class Boolean(LogicalType):
-    primary_dtype = 'bool'
-
-
-class String(LogicalType):
-    primary_dtype = 'object'
-
-
-int_inference_fn = ww.type_system.inference_functions[ww.logical_types.Integer]
-bool_inference_fn = ww.type_system.inference_functions[ww.logical_types.Boolean]
-str_inference_fn = ww.type_system.inference_functions[ww.logical_types.NaturalLanguage]
-
-
-ww.type_system.remove_type(ww.logical_types.Integer)
-ww.type_system.remove_type(ww.logical_types.Boolean)
-ww.type_system.add_type(Integer, int_inference_fn)
-ww.type_system.add_type(Boolean, bool_inference_fn)
-ww.type_system.add_type(String, str_inference_fn)
-ww.type_system.default_type = String
-ww.type_system.remove_type(ww.logical_types.NaturalLanguage)
+from woodwork.logical_types import Boolean, Integer
+from woodwork.logical_types import NaturalLanguage as String
 
 # hack to prevent warnings from skopt
 # must import sklearn first

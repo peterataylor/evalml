@@ -6,7 +6,8 @@ from evalml.utils import (
     _retain_custom_types_and_initalize_woodwork,
     infer_feature_types
 )
-
+from evalml import Boolean
+import woodwork as ww
 
 class SimpleImputer(Transformer):
     """Imputes missing data according to a specified imputation strategy."""
@@ -55,6 +56,11 @@ class SimpleImputer(Transformer):
         self._all_null_cols = set(X.columns) - set(X.dropna(axis=1, how='all').columns)
         return self
 
+    def _can_convert_to_bool(self, old_data, new_data):
+        bool_columns = old_data.ww.select('boolean').columns
+        is_bool = ww.type_system.inference_functions[Boolean]
+        return [c for c in bool_columns if is_bool(new_data[c]) and is_bool(old_data[c])]
+
     def transform(self, X, y=None):
         """Transforms input by imputing missing values. 'None' and np.nan values are treated as the same.
 
@@ -74,9 +80,11 @@ class SimpleImputer(Transformer):
         X_null_dropped = X_ww.ww.drop(self._all_null_cols)
         X_t = self._component_obj.transform(X_ww)
 
+        # Need this for test_simple_imputer_multitype_with_one_bool
         X_t = pd.DataFrame(X_t, columns=X_null_dropped.columns)
         if not X_null_dropped.empty:
             X_t.index = X_null_dropped.index
+
         return _retain_custom_types_and_initalize_woodwork(X_ww.ww.logical_types, X_t)
 
     def fit_transform(self, X, y=None):

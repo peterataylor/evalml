@@ -62,7 +62,7 @@ class DelayedFeatureTransformer(Transformer):
 
     @staticmethod
     def _get_categorical_columns(X):
-        return [name for name, column in X.ww.columns.items() if column['logical_type'] == logical_types.Categorical]
+        return [name for name, column in X.ww.columns.items() if column.logical_type == logical_types.Categorical]
 
     @staticmethod
     def _encode_X_while_preserving_index(X_categorical):

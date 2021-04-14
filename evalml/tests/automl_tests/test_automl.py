@@ -1981,7 +1981,7 @@ def test_automl_woodwork_user_types_preserved(mock_binary_fit, mock_binary_score
     X['num col'] = pd.Series(new_col)
     X['text col'] = pd.Series([f"{num}" for num in range(len(new_col))])
     X.ww.init(semantic_tags={'cat col': 'category', 'num col': 'numeric'},
-              logical_types={'cat col': 'Categorical', 'num col': 'Integer', 'text col': 'string'})
+              logical_types={'cat col': 'Categorical', 'num col': 'Integer', 'text col': 'NaturalLanguage'})
     automl = AutoMLSearch(X_train=X, y_train=y, problem_type=problem_type, max_batches=5)
     automl.search()
     for arg in mock_fit.call_args[0]:

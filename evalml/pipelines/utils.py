@@ -67,7 +67,7 @@ def _get_preprocessing_components(X, y, problem_type, estimator_class):
     if len(input_logical_types.intersection(types_imputer_handles)) > 0:
         pp_components.append(Imputer)
 
-    text_columns = list(X.ww.select('string').columns)
+    text_columns = list(X.ww.select('NaturalLanguage').columns)
     if len(text_columns) > 0:
         pp_components.append(TextFeaturizer)
 
