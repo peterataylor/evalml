@@ -333,6 +333,25 @@ def test_imputer_multitype_with_one_bool(data_type, make_data_type):
     assert_frame_equal(X_multi_expected_arr, X_multi_t)
 
 
+def test_imputer_int_preserved():
+    X = pd.DataFrame(pd.Series([1, 2, 11, np.nan]))
+    imputer = Imputer(numeric_impute_strategy="mean")
+    transformed = imputer.fit_transform(X)
+    pd.testing.assert_frame_equal(transformed, pd.DataFrame(pd.Series([1, 2, 11, 14/3])))
+    assert transformed.ww.logical_types == {0: Double}
+
+    X = pd.DataFrame(pd.Series([1, 2, 3, np.nan]))
+    imputer = Imputer(numeric_impute_strategy="mean")
+    transformed = imputer.fit_transform(X)
+    pd.testing.assert_frame_equal(transformed, pd.DataFrame(pd.Series([1, 2, 3, 2])), check_dtype=False)
+
+    X = pd.DataFrame(pd.Series([1, 2, 3, 4], dtype='int'))
+    imputer = Imputer(numeric_impute_strategy="mean")
+    transformed = imputer.fit_transform(X)
+    pd.testing.assert_frame_equal(transformed, pd.DataFrame(pd.Series([1, 2, 3, 4])), check_dtype=False)
+    assert transformed.ww.logical_types == {0: Integer}
+
+
 @pytest.mark.parametrize("X_df", [pd.DataFrame(pd.Series([1, 2, 3], dtype="Int64")),
                                   pd.DataFrame(pd.Series([1., 2., 4.], dtype="float")),
                                   pd.DataFrame(pd.Series(['a', 'b', 'a'], dtype="category")),
