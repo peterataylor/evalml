@@ -1,7 +1,4 @@
 import warnings
-import woodwork as ww
-
-ww.config.set_option('use_nullable_dtypes', False)
 
 from woodwork.logical_types import Boolean, Integer
 from woodwork.logical_types import NaturalLanguage as String

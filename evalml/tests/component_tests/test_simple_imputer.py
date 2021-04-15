@@ -291,7 +291,7 @@ def test_simple_imputer_woodwork_custom_overrides_returned_by_components(X_df, h
     y = pd.Series([1, 2, 1])
     if has_nan:
         X_df.iloc[len(X_df) - 1, 0] = np.nan
-    override_types = [Integer, Double, Categorical, String, Boolean]
+    override_types = [Integer, Double, Categorical, Boolean]
     for logical_type in override_types:
         try:
             X = X_df

@@ -48,6 +48,8 @@ def infer_feature_types(data, feature_types=None):
             ww_data = ww.init_series(ww_data, logical_type=feature_types)
     else:
         if data.ww.schema is not None:
+            if set(data.ww.logical_types.values()).intersection({ww.logical_types.BooleanNullable, ww.logical_types.IntegerNullable}):
+                raise ValueError()
             ww_data.ww.init(logical_types=data.ww.logical_types,
                             semantic_tags=data.ww.semantic_tags)
         else:

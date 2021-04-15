@@ -344,12 +344,27 @@ def test_imputer_int_preserved():
     imputer = Imputer(numeric_impute_strategy="mean")
     transformed = imputer.fit_transform(X)
     pd.testing.assert_frame_equal(transformed, pd.DataFrame(pd.Series([1, 2, 3, 2])), check_dtype=False)
+    assert transformed.ww.logical_types == {0: Double}
 
     X = pd.DataFrame(pd.Series([1, 2, 3, 4], dtype='int'))
     imputer = Imputer(numeric_impute_strategy="mean")
     transformed = imputer.fit_transform(X)
     pd.testing.assert_frame_equal(transformed, pd.DataFrame(pd.Series([1, 2, 3, 4])), check_dtype=False)
     assert transformed.ww.logical_types == {0: Integer}
+
+
+def test_imputer_bool_preserved():
+    X = pd.DataFrame(pd.Series([True, False, True, np.nan]))
+    imputer = Imputer(categorical_impute_strategy="most_frequent")
+    transformed = imputer.fit_transform(X)
+    pd.testing.assert_frame_equal(transformed, pd.DataFrame(pd.Series([True, False, True, True], dtype="category")))
+    assert transformed.ww.logical_types == {0: Categorical}
+
+    X = pd.DataFrame(pd.Series([True, False, True, False]))
+    imputer = Imputer(categorical_impute_strategy="most_frequent")
+    transformed = imputer.fit_transform(X)
+    pd.testing.assert_frame_equal(transformed, pd.DataFrame(pd.Series([True, False, True, False])), check_dtype=False)
+    assert transformed.ww.logical_types == {0: Boolean}
 
 
 @pytest.mark.parametrize("X_df", [pd.DataFrame(pd.Series([1, 2, 3], dtype="Int64")),

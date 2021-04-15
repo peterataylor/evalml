@@ -104,3 +104,13 @@ def test_convert_numeric_dataset_pandas(datatype, value, error, make_data_type):
 
         pd.testing.assert_frame_equal(X_ww, X_transformed)
         pd.testing.assert_series_equal(y_ww, y_transformed)
+
+
+def test_infer_feature_types_value_error():
+
+    df = pd.DataFrame({"a": pd.Series([1, 2, 3]),
+                       "b": pd.Series([4, 5, 6]),
+                       "c": pd.Series([True, False, True])})
+    df.ww.init(logical_types={"a": "IntegerNullable", "c": "BooleanNullable"})
+    with pytest.raises(ValueError):
+        infer_feature_types(df)
