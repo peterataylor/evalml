@@ -57,7 +57,7 @@ class LSA(TextTransformer):
 
         provenance = {}
         for col in self._text_columns:
-            transformed = self._lsa_pipeline.transform(X_ww[col].astype(str))
+            transformed = self._lsa_pipeline.transform(X_ww[col])
             X_ww.ww['LSA({})[0]'.format(col)] = pd.Series(transformed[:, 0], index=X_ww.index)
             X_ww.ww['LSA({})[1]'.format(col)] = pd.Series(transformed[:, 1], index=X_ww.index)
             provenance[col] = ['LSA({})[0]'.format(col), 'LSA({})[1]'.format(col)]
