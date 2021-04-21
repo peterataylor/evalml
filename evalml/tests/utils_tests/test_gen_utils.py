@@ -6,7 +6,6 @@ from unittest.mock import MagicMock, patch
 import numpy as np
 import pandas as pd
 import pytest
-import woodwork as ww
 
 from evalml.model_understanding.graphs import visualize_decision_tree
 from evalml.pipelines.components import ComponentBase

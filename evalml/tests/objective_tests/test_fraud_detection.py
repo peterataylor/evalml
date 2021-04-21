@@ -1,7 +1,6 @@
 import numpy as np
 import pandas as pd
 import pytest
-import woodwork as ww
 
 from evalml import AutoMLSearch
 from evalml.objectives import FraudCost

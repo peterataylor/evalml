@@ -964,6 +964,26 @@ def test_hyperparameters_none(dummy_classifier_estimator_class):
     assert MockPipelineNone(parameters={}).hyperparameters == {'Mock Classifier': {}}
 
 
+def test_hyperparameters_linear_pipeline_duplicate_components():
+
+    class PipeLineLinear(BinaryClassificationPipeline):
+        component_graph = ["One Hot Encoder", "One Hot Encoder", "Random Forest Classifier"]
+
+    assert PipeLineLinear.hyperparameters == {'One Hot Encoder': {},
+                                              "One Hot Encoder_1": {},
+                                              'Random Forest Classifier': {'n_estimators': Integer(10, 1000),
+                                                                           'max_depth': Integer(1, 10)}}
+
+    class PipeLineLinear(BinaryClassificationPipeline):
+        custom_hyperparameters = {"One Hot Encoder_1": {"top_n": Integer(10, 50)}}
+        component_graph = ["One Hot Encoder", "One Hot Encoder", "Random Forest Classifier"]
+
+    assert PipeLineLinear.hyperparameters == {'One Hot Encoder': {},
+                                              "One Hot Encoder_1": {"top_n": Integer(10, 50)},
+                                              'Random Forest Classifier': {'n_estimators': Integer(10, 1000),
+                                                                           'max_depth': Integer(1, 10)}}
+
+
 @patch('evalml.pipelines.components.Estimator.predict')
 def test_score_with_objective_that_requires_predict_proba(mock_predict, dummy_regression_pipeline_class, X_y_binary):
     X, y = X_y_binary
@@ -1976,14 +1996,55 @@ def test_score_error_when_custom_objective_not_instantiated(problem_type, logist
         pipeline.score(X, y, objectives=[CostBenefitMatrix(1, 1, -1, -1), "F1"])
 
 
-def test_binary_pipeline_string_target_thresholding(make_data_type, logistic_regression_binary_pipeline_class, X_y_binary):
+@pytest.mark.parametrize("is_time_series", [True, False])
+def test_binary_pipeline_string_target_thresholding(is_time_series, make_data_type, time_series_binary_classification_pipeline_class,
+                                                    logistic_regression_binary_pipeline_class,
+                                                    X_y_binary):
     X, y = X_y_binary
     X = make_data_type('ww', X)
-    y = make_data_type('ww', pd.Series([f"String value {i}" for i in y]))
+    y = ww.init_series(pd.Series([f"String value {i}" for i in y]), "Categorical")
     objective = get_objective("F1", return_instance=True)
-    pipeline = logistic_regression_binary_pipeline_class(parameters={"Logistic Regression Classifier": {"n_jobs": 1}})
+    pipeline_class = time_series_binary_classification_pipeline_class if is_time_series else logistic_regression_binary_pipeline_class
+
+    pipeline = pipeline_class(parameters={"Logistic Regression Classifier": {"n_jobs": 1},
+                                          "pipeline": {"gap": 0, "max_delay": 1}})
     pipeline.fit(X, y)
     assert pipeline.threshold is None
     pred_proba = pipeline.predict_proba(X, y).iloc[:, 1]
     pipeline.optimize_threshold(X, y, pred_proba, objective)
     assert pipeline.threshold is not None
+
+
+@patch("evalml.pipelines.components.LogisticRegressionClassifier.fit")
+def test_undersampler_component_in_pipeline_fit(mock_fit):
+    class BinaryPipeline(BinaryClassificationPipeline):
+        component_graph = ['Imputer', 'Undersampler', 'Logistic Regression Classifier']
+
+    X = pd.DataFrame({"a": [i for i in range(1000)],
+                      "b": [i % 3 for i in range(1000)]})
+    y = pd.Series([0] * 100 + [1] * 900)
+    pipeline = BinaryPipeline({})
+    pipeline.fit(X, y)
+    # make sure we undersample to 500 values in the X and y
+    assert len(mock_fit.call_args[0][0]) == 500
+    assert all(mock_fit.call_args[0][1].value_counts().values == [400, 100])
+
+    # balance the data
+    y_balanced = pd.Series([0] * 400 + [1] * 600)
+    pipeline.fit(X, y_balanced)
+    assert len(mock_fit.call_args[0][0]) == 1000
+
+
+def test_undersampler_component_in_pipeline_predict():
+    class BinaryPipeline(BinaryClassificationPipeline):
+        component_graph = ['Imputer', 'Undersampler', 'Logistic Regression Classifier']
+
+    X = pd.DataFrame({"a": [i for i in range(1000)],
+                      "b": [i % 3 for i in range(1000)]})
+    y = pd.Series([0] * 100 + [1] * 900)
+    pipeline = BinaryPipeline({})
+    pipeline.fit(X, y)
+    preds = pipeline.predict(X)
+    assert len(preds) == 1000
+    preds = pipeline.predict_proba(X)
+    assert len(preds) == 1000

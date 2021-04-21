@@ -2,14 +2,75 @@ Release Notes
 -------------
 **Future Releases**
     * Enhancements
+    * Fixes
+    * Changes
+    * Documentation Changes
+    * Testing Changes
+
+
+.. warning::
+
+    **Breaking Changes**
+
+**v0.23.0 Apr. 20, 2021**
+    * Enhancements
+        * Refactored ``EngineBase`` and ``SequentialEngine`` api. Adding ``DaskEngine`` :pr:`1975`.
+        * Added optional ``engine`` argument to ``AutoMLSearch`` :pr:`1975`
+        * Added a warning about how time series support is still in beta when a user passes in a time series problem to ``AutoMLSearch`` :pr:`2118`
+        * Added ``NaturalLanguageNaNDataCheck`` data check :pr:`2122`
+        * Added ValueError to ``partial_dependence`` to prevent users from computing partial dependence on columns with all NaNs :pr:`2120`
+        * Added standard deviation of cv scores to rankings table :pr:`2154`
+    * Fixes
+        * Fixed ``BalancedClassificationDataCVSplit``, ``BalancedClassificationDataTVSplit``, and ``BalancedClassificationSampler`` to use ``minority:majority`` ratio instead of ``majority:minority`` :pr:`2077`
+        * Fixed bug where two-way partial dependence plots with categorical variables were not working correctly :pr:`2117`
+        * Fixed bug where ``hyperparameters`` were not displaying properly for pipelines with a list ``component_graph`` and duplicate components :pr:`2133`
+        * Fixed bug where ``pipeline_parameters`` argument in ``AutoMLSearch`` was not applied to pipelines passed in as ``allowed_pipelines`` :pr:`2133`
+        * Fixed bug where ``AutoMLSearch`` was not applying custom hyperparameters to pipelines with a list ``component_graph`` and duplicate components :pr:`2133`
+    * Changes
+        * Removed ``hyperparameter_ranges`` from Undersampler and renamed ``balanced_ratio`` to ``sampling_ratio`` for samplers :pr:`2113`
+        * Renamed ``TARGET_BINARY_NOT_TWO_EXAMPLES_PER_CLASS`` data check message code to ``TARGET_MULTICLASS_NOT_TWO_EXAMPLES_PER_CLASS`` :pr:`2126`
+        * Modified one-way partial dependence plots of categorical features to display data with a bar plot :pr:`2117`
+        * Renamed ``score`` column for ``automl.rankings`` as ``mean_cv_score`` :pr:`2135`
+        * Remove 'warning' from docs tool output :pr:`2031`
+    * Documentation Changes
+        * Fixed ``conf.py`` file :pr:`2112`
+        * Added a sentence to the automl user guide stating that our support for time series problems is still in beta. :pr:`2118`
+        * Fixed documentation demos :pr:`2139`
+        * Update test badge in README to use GitHub Actions :pr:`2150`
+    * Testing Changes
+        * Fixed ``test_describe_pipeline`` for ``pandas`` ``v1.2.4`` :pr:`2129`
+        * Added a GitHub Action for building the conda package :pr:`1870` :pr:`2148`
+
+
+.. warning::
+
+    **Breaking Changes**
+        * Renamed ``balanced_ratio`` to ``sampling_ratio`` for the ``BalancedClassificationDataCVSplit``, ``BalancedClassificationDataTVSplit``, ``BalancedClassficationSampler``, and Undersampler :pr:`2113`
+        * Deleted the "errors" key from automl results :pr:`1975`
+        * Deleted the ``raise_and_save_error_callback`` and the ``log_and_save_error_callback`` :pr:`1975`
+        * Fixed ``BalancedClassificationDataCVSplit``, ``BalancedClassificationDataTVSplit``, and ``BalancedClassificationSampler`` to use minority:majority ratio instead of majority:minority :pr:`2077`
+
+
+**v0.22.0 Apr. 06, 2021**
+    * Enhancements
+        * Added a GitHub Action for ``linux_unit_tests``:pr:`2013`
+        * Added recommended actions for ``InvalidTargetDataCheck``, updated ``_make_component_list_from_actions`` to address new action, and added ``TargetImputer`` component :pr:`1989`
         * Updated ``AutoMLSearch._check_for_high_variance`` to not emit ``RuntimeWarning`` :pr:`2024`
         * Added exception when pipeline passed to ``explain_predictions`` is a ``Stacked Ensemble`` pipeline :pr:`2033`
+        * Added sensitivity at low alert rates as an objective :pr:`2001`
+        * Added ``Undersampler`` transformer component :pr:`2030`
     * Fixes
+        * Updated Engine's ``train_batch`` to apply undersampling :pr:`2038`
+        * Fixed bug in where Time Series Classification pipelines were not encoding targets in ``predict`` and ``predict_proba`` :pr:`2040`
+        * Fixed data splitting errors if target is float for classification problems :pr:`2050`
+        * Pinned ``docutils`` to <0.17 to fix ReadtheDocs warning issues :pr:`2088`
     * Changes
         * Removed lists as acceptable hyperparameter ranges in ``AutoMLSearch`` :pr:`2028`
         * Renamed "details" to "metadata" for data check actions :pr:`2008`
     * Documentation Changes
-        * Catch and suppress warnings in documentation :pr:`1991`
+        * Catch and suppress warnings in documentation :pr:`1991` :pr:`2097`
+        * Change spacing in ``start.ipynb`` to provide clarity for ``AutoMLSearch`` :pr:`2078`
+        * Fixed start code on README :pr:`2108`
     * Testing Changes
 
 
@@ -24,7 +85,9 @@ Release Notes
         * Added error message for ``partial_dependence`` when features are mostly the same value :pr:`1994`
         * Updated ``OneHotEncoder`` to drop one redundant feature by default for features with two categories :pr:`1997`
         * Added a ``PolynomialDetrender`` component :pr:`1992`
+        * Added ``DateTimeNaNDataCheck`` data check :pr:`2039`
     * Fixes
+        * Changed best pipeline to train on the entire dataset rather than just ensemble indices for ensemble problems :pr:`2037`
         * Updated binary classification pipelines to use objective decision function during scoring of custom objectives :pr:`1934`
     * Changes
         * Removed ``data_checks`` parameter, ``data_check_results`` and data checks logic from ``AutoMLSearch`` :pr:`1935`
@@ -34,6 +97,7 @@ Release Notes
     * Testing Changes
         * Removed ``build_docs`` CI job in favor of RTD GH builder :pr:`1974`
         * Added tests to confirm support for Python 3.9 :pr:`1724`
+        * Added tests to support Dask AutoML/Engine :pr:`1990`
         * Changed ``build_conda_pkg`` job to use ``latest_release_changes`` branch in the feedstock. :pr:`1979`
 
 .. warning::

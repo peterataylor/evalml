@@ -128,8 +128,6 @@ AutoML Callbacks
     silent_error_callback
     log_error_callback
     raise_error_callback
-    log_and_save_error_callback
-    raise_and_save_error_callback
 
 
 .. currentmodule:: evalml.pipelines
@@ -250,6 +248,7 @@ Transformers are components that take in data as input and output transformed da
     DelayedFeatureTransformer
     DFSTransformer
     PolynomialDetrender
+    Undersampler
 
 Estimators
 ~~~~~~~~~~
@@ -529,7 +528,8 @@ Data Check Classes
     NoVarianceDataCheck
     ClassImbalanceDataCheck
     MulticollinearityDataCheck
-
+    DateTimeNaNDataCheck
+    NaturalLanguageNaNDataCheck
 
 .. autosummary::
     :toctree: generated

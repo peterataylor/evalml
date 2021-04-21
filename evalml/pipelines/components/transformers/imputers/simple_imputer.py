@@ -6,8 +6,7 @@ from evalml.utils import (
     _retain_custom_types_and_initalize_woodwork,
     infer_feature_types
 )
-from evalml import Boolean
-import woodwork as ww
+
 
 class SimpleImputer(Transformer):
     """Imputes missing data according to a specified imputation strategy."""

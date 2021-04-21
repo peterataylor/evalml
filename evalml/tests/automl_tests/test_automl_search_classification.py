@@ -167,7 +167,7 @@ def test_categorical_classification(X_y_categorical_classification):
     X, y = X_y_categorical_classification
     automl = AutoMLSearch(X_train=X, y_train=y, problem_type='binary', objective="precision", max_iterations=5, n_jobs=1)
     automl.search()
-    assert not automl.rankings['score'].isnull().all()
+    assert not automl.rankings["mean_cv_score"].isnull().all()
 
 
 def test_random_seed(X_y_binary):
@@ -202,7 +202,7 @@ def test_callback(X_y_binary):
                           n_jobs=1)
     automl.search()
 
-    assert counts["start_iteration_callback"] == max_iterations
+    assert counts["start_iteration_callback"] == len(get_estimators('binary')) + 1
     assert counts["add_result_callback"] == max_iterations
 
 
@@ -632,7 +632,6 @@ def test_automl_multiclass_nonlinear_pipeline_search_more_iterations(nonlinear_m
                           allowed_pipelines=allowed_pipelines, n_jobs=1)
     automl.search()
 
-    assert start_iteration_callback.call_count == 5
     assert start_iteration_callback.call_args_list[0][0][0] == ModeBaselineMulticlassPipeline
     assert start_iteration_callback.call_args_list[1][0][0] == nonlinear_multiclass_pipeline_class
     assert start_iteration_callback.call_args_list[4][0][0] == nonlinear_multiclass_pipeline_class

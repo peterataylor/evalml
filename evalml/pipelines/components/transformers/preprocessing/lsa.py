@@ -6,10 +6,7 @@ from sklearn.pipeline import make_pipeline
 from evalml.pipelines.components.transformers.preprocessing import (
     TextTransformer
 )
-from evalml.utils import (
-    _retain_custom_types_and_initalize_woodwork,
-    infer_feature_types
-)
+from evalml.utils import infer_feature_types
 
 
 class LSA(TextTransformer):

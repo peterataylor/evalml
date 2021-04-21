@@ -337,7 +337,7 @@ def test_imputer_int_preserved():
     X = pd.DataFrame(pd.Series([1, 2, 11, np.nan]))
     imputer = Imputer(numeric_impute_strategy="mean")
     transformed = imputer.fit_transform(X)
-    pd.testing.assert_frame_equal(transformed, pd.DataFrame(pd.Series([1, 2, 11, 14/3])))
+    pd.testing.assert_frame_equal(transformed, pd.DataFrame(pd.Series([1, 2, 11, 14 / 3])))
     assert transformed.ww.logical_types == {0: Double}
 
     X = pd.DataFrame(pd.Series([1, 2, 3, np.nan]))

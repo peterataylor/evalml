@@ -109,6 +109,7 @@ class TimeSeriesClassificationPipeline(ClassificationPipeline, metaclass=TimeSer
             ww.DataColumn: Predicted values.
         """
         X, y = self._convert_to_woodwork(X, y)
+        y = self._encode_targets(y)
         n_features = max(len(y), X.shape[0])
         predictions = self._predict(X, y, objective=objective, pad=False)
         # In case gap is 0 and this is a baseline pipeline, we drop the nans in the
@@ -127,6 +128,7 @@ class TimeSeriesClassificationPipeline(ClassificationPipeline, metaclass=TimeSer
             ww.DataTable: Probability estimates
         """
         X, y = self._convert_to_woodwork(X, y)
+        y = self._encode_targets(y)
         features = self.compute_estimator_features(X, y)
         features_no_nan, y_no_nan = drop_rows_with_nans(features, y)
         proba = self._estimator_predict_proba(features_no_nan, y_no_nan)

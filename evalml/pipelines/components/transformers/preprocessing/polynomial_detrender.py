@@ -1,5 +1,4 @@
 import pandas as pd
-import woodwork as ww
 from skopt.space import Integer
 
 from evalml.pipelines.components.transformers.transformer import Transformer

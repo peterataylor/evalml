@@ -86,7 +86,6 @@ class OneHotEncoder(Transformer, metaclass=OneHotEncoderMeta):
         if self.features_to_encode is None:
             self.features_to_encode = self._get_cat_cols(X)
 
-        #X = _convert_woodwork_types_wrapper(X)
         X_t = X
         invalid_features = [col for col in self.features_to_encode if col not in list(X.columns)]
         if len(invalid_features) > 0:

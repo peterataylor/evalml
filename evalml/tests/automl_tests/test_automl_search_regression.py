@@ -59,7 +59,7 @@ def test_categorical_regression(X_y_categorical_regression):
     automl = AutoMLSearch(X_train=X, y_train=y, problem_type='regression', objective="R2", max_iterations=5, random_seed=0,
                           n_jobs=1)
     automl.search()
-    assert not automl.rankings['score'].isnull().all()
+    assert not automl.rankings["mean_cv_score"].isnull().all()
 
 
 def test_callback(X_y_regression):
@@ -82,7 +82,7 @@ def test_callback(X_y_regression):
                           add_result_callback=add_result_callback, n_jobs=1)
     automl.search()
 
-    assert counts["start_iteration_callback"] == max_iterations
+    assert counts["start_iteration_callback"] == len(get_estimators("regression")) + 1
     assert counts["add_result_callback"] == max_iterations
 
 

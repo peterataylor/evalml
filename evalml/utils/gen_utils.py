@@ -6,7 +6,6 @@ from functools import reduce
 
 import numpy as np
 import pandas as pd
-import woodwork as ww
 from sklearn.utils import check_random_state
 
 from evalml.exceptions import (
