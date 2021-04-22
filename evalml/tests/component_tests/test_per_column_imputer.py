@@ -180,11 +180,12 @@ def test_transform_drop_all_nan_columns_empty():
     assert_frame_equal(X, pd.DataFrame([[np.nan, np.nan, np.nan]]))
 
 
-@pytest.mark.parametrize("X_df", [pd.DataFrame(pd.Series([1, 2, 3], dtype="Int64")),
+@pytest.mark.parametrize("X_df", [pd.DataFrame(pd.Series([1, 2, 3], dtype="int64")),
                                   pd.DataFrame(pd.Series([1., 2., 3.], dtype="float")),
                                   pd.DataFrame(pd.Series(['a', 'b', 'a'], dtype="category")),
                                   pd.DataFrame(pd.Series([True, False, True], dtype="boolean")),
-                                  pd.DataFrame(pd.Series(['this will be a natural language column because length', 'yay', 'hay'], dtype="string"))])
+                                  pd.DataFrame(pd.Series(['this will be a natural language column because length', 'yay', 'hay'], dtype="string"))
+                         ])
 @pytest.mark.parametrize("has_nan", [True, False])
 def test_per_column_imputer_woodwork_custom_overrides_returned_by_components(X_df, has_nan):
     y = pd.Series([1, 2, 1])
@@ -193,13 +194,20 @@ def test_per_column_imputer_woodwork_custom_overrides_returned_by_components(X_d
     override_types = [Integer, Double, Categorical, Boolean]
     for logical_type in override_types:
         try:
-            X = X_df
+            X = X_df.copy()
             X.ww.init(logical_types={0: logical_type})
+            from woodwork.table_accessor import _get_invalid_schema_message
+            if _get_invalid_schema_message(X, X.ww.schema):
+                continue
         except ww.exceptions.TypeConversionError:
             continue
 
         imputer = PerColumnImputer()
         imputer.fit(X, y)
-        transformed = imputer.transform(X, y)
+        try:
+            transformed = imputer.transform(X, y)
+        except Exception as e:
+            breakpoint()
+            raise e
         assert isinstance(transformed, pd.DataFrame)
         assert transformed.ww.logical_types == {0: logical_type}

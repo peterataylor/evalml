@@ -51,8 +51,9 @@ def infer_feature_types(data, feature_types=None):
             nullable_types = {ww.logical_types.BooleanNullable, ww.logical_types.IntegerNullable}
             if set(data.ww.logical_types.values()).intersection(nullable_types):
                 raise ValueError()
-            ww_data.ww.init(logical_types=data.ww.logical_types,
-                            semantic_tags=data.ww.semantic_tags)
+            ww_data = data.ww.copy()
+            if not ww_data.ww.schema:
+                raise ValueError("Invalid schema")
         else:
             ww_data.ww.init(logical_types=feature_types)
 

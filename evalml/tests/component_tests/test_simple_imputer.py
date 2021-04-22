@@ -294,8 +294,11 @@ def test_simple_imputer_woodwork_custom_overrides_returned_by_components(X_df, h
     override_types = [Integer, Double, Categorical, Boolean]
     for logical_type in override_types:
         try:
-            X = X_df
+            X = X_df.copy()
             X.ww.init(logical_types={0: logical_type})
+            from woodwork.table_accessor import _get_invalid_schema_message
+            if _get_invalid_schema_message(X, X.ww.schema):
+                continue
         except ww.exceptions.TypeConversionError:
             continue
 
