@@ -77,8 +77,6 @@ class PerColumnImputer(Transformer):
             ww.DataTable: Transformed X
         """
         X_ww = infer_feature_types(X)
-        import copy
-        original_ltypes = copy.deepcopy(X_ww.ww.logical_types)
         cols_to_drop = []
         for column, imputer in self.imputers.items():
             transformed = imputer.transform(X_ww[[column]])
@@ -87,4 +85,4 @@ class PerColumnImputer(Transformer):
             else:
                 X_ww.ww[column] = transformed[column]
         X_t = X_ww.ww.drop(cols_to_drop)
-        return _retain_custom_types_and_initalize_woodwork(original_ltypes, X_t)
+        return _retain_custom_types_and_initalize_woodwork(X_ww.ww.logical_types, X_t)
