@@ -2,16 +2,12 @@ import string
 
 import featuretools as ft
 import nlp_primitives
-import pandas as pd
 
 from evalml.pipelines.components.transformers.preprocessing import (
     LSA,
     TextTransformer
 )
-from evalml.utils import (
-    _retain_custom_types_and_initalize_woodwork,
-    infer_feature_types
-)
+from evalml.utils import infer_feature_types
 
 
 class TextFeaturizer(TextTransformer):
@@ -108,7 +104,6 @@ class TextFeaturizer(TextTransformer):
             ww.DataTable: Transformed X
         """
         X_ww = infer_feature_types(X)
-        original_types = X_ww.ww.logical_types
         if self._features is None or len(self._features) == 0:
             return X_ww
         es = self._make_entity_set(X_ww, self._text_columns)
@@ -118,8 +113,12 @@ class TextFeaturizer(TextTransformer):
 
         X_lsa = self._lsa.transform(X_ww[self._text_columns])
         X_nlp_primitives.set_index(X_ww.index, inplace=True)
-        X_t = pd.concat([X_ww.drop(self._text_columns, axis=1), X_nlp_primitives, X_lsa], axis=1)
-        return _retain_custom_types_and_initalize_woodwork(original_types, X_t)
+        X_ww = X_ww.ww.drop(self._text_columns)
+        for col in X_nlp_primitives:
+            X_ww.ww[col] = X_nlp_primitives[col]
+        for col in X_lsa:
+            X_ww.ww[col] = X_lsa[col]
+        return X_ww
 
     def _get_feature_provenance(self):
         if not self._text_columns:

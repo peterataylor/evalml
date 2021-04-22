@@ -139,24 +139,19 @@ class OneHotEncoder(Transformer, metaclass=OneHotEncoderMeta):
         X_ww = infer_feature_types(X)
         X_copy = self._handle_parameter_handle_missing(X_ww)
 
-        X_t = pd.DataFrame()
-        # Add the non-categorical columns, untouched
-        for col in X_copy.columns:
-            if col not in self.features_to_encode:
-                X_t = pd.concat([X_t, X_copy[col]], axis=1)
-        # The call to pd.concat above changes the type of the index so we will manually keep it the same.
-        if not X_t.empty:
-            X_t.index = X_copy.index
+        X_ww = X_ww.ww.drop(self.features_to_encode)
 
         # Call sklearn's transform on the categorical columns
         if len(self.features_to_encode) > 0:
             X_cat = pd.DataFrame(self._encoder.transform(X_copy[self.features_to_encode]).toarray(), index=X_copy.index)
             X_cat.columns = self._get_feature_names()
-            X_t = pd.concat([X_t, X_cat], axis=1)
-            X_t = X_t.drop(columns=self._features_to_drop)
-            self._feature_names = X_t.columns
+            X_cat = X_cat.drop(columns=self._features_to_drop)
+            self._feature_names = X_cat.columns
 
-        return _retain_custom_types_and_initalize_woodwork(X_ww.ww.logical_types, X_t)
+            for col in X_cat:
+                X_ww.ww[col] = X_cat[col]
+
+        return X_ww
 
     def _handle_parameter_handle_missing(self, X):
         """Helper method to handle the `handle_missing` parameter."""
