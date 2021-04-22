@@ -146,8 +146,8 @@ class OneHotEncoder(Transformer, metaclass=OneHotEncoderMeta):
             X_cat = pd.DataFrame(self._encoder.transform(X_copy[self.features_to_encode]).toarray(), index=X_copy.index)
             X_cat.columns = self._get_feature_names()
             X_cat = X_cat.drop(columns=self._features_to_drop)
+            X_cat.ww.init(logical_types={c: "Boolean" for c in X_cat.columns})
             self._feature_names = X_cat.columns
-
             for col in X_cat:
                 X_ww.ww[col] = X_cat[col]
 

@@ -540,3 +540,21 @@ def test_ohe_woodwork_custom_overrides_returned_by_components(X_df):
         assert isinstance(transformed, pd.DataFrame)
         if logical_type != Categorical:
             assert transformed.ww.logical_types == {0: logical_type}
+
+
+
+def test_ohe_output_bools():
+    X = pd.DataFrame({"bool": [bool(i % 2) for i in range(100)],
+                                   "categorical": ["dog"] * 20 + ["cat"] * 40 + ["fish"] * 40,
+                                   "integers": [i for i in range(100)]})
+    X.ww.init()
+    y = pd.Series([i % 2 for i in range(100)])
+    y.ww.init()
+    ohe = OneHotEncoder()
+    output = ohe.fit_transform(X, y)
+    for name, types in output.ww.types["Logical Type"].items():
+        if name == 'integers':
+            assert str(types) == "Integer"
+        else:
+            assert str(types) == "Boolean"
+    assert len(output.columns) == 5
