@@ -179,8 +179,6 @@ _not_used_in_automl = {
     "SklearnStackedEnsembleClassifier",
     "SklearnStackedEnsembleRegressor",
     "KNeighborsClassifier",
-    "SVMClassifier",
-    "SVMRegressor",
     "ProphetRegressor",
 }
 
