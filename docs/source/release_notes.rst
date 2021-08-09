@@ -3,15 +3,23 @@ Release Notes
 **Future Release**
     * Enhancements
         * Added ``ProphetRegressor`` to estimators :pr:`2242`
+        * Updated ``ComponentGraph`` ``_validate_component_dict`` logic to be stricter about input values :pr:`2599`
+        * Patched bug in ``xgboost`` estimators where predicting on a feature matrix of only booleans would throw an exception. :pr:`2602`
     * Fixes
+        * Updated ``get_best_sampler_for_data`` to consider all non-numeric datatypes as categorical for SMOTE :pr:`2590`
     * Changes
+        * Renamed SMOTE samplers to SMOTE oversampler :pr:`2595`
     * Documentation Changes
     * Testing Changes
         * Changed the lint CI job to only check against python 3.9 via the `-t` flag :pr:`2586`
+        * Installed Prophet in linux nightlies test and fixed ``test_all_components`` :pr:`2598`
+        * Refactored and fixed all ``make_pipeline`` tests to assert correct order and address new Woodwork Unknown type inference :pr:`2572`
 
 .. warning::
 
     **Breaking Changes**
+        * Renamed SMOTE samplers to SMOTE oversampler. Please use ``SMOTEOversampler``, ``SMOTENCOversampler``, ``SMOTENOversampler`` instead of ``SMOTESampler``, ``SMOTENCSampler``, and ``SMOTENSampler`` :pr:`2595`
+
 
 **v0.30.0 Aug. 3, 2021**
     * Enhancements
@@ -32,7 +40,7 @@ Release Notes
         * Renamed ``ComponentGraph``'s ``get_parents`` to ``get_inputs`` :pr:`2540`
         * Removed ``ComponentGraph.linearized_component_graph`` and ``ComponentGraph.from_list`` :pr:`2556`
         * Updated ``ComponentGraph`` to enforce requiring `.x` and `.y` inputs for each component in the graph :pr:`2563`
-        * Rename existing ensembler implementation from ``StackedEnsemblers`` to ``SklearnStackedEnsemblers`` :pr:`2578`
+        * Renamed existing ensembler implementation from ``StackedEnsemblers`` to ``SklearnStackedEnsemblers`` :pr:`2578`
     * Documentation Changes
         * Added documentation for ``DaskEngine`` and ``CFEngine`` parallel engines :pr:`2560`
         * Improved detail of ``TextFeaturizer`` docstring and tutorial :pr:`2568`
