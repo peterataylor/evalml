@@ -151,7 +151,7 @@ def _get_preprocessing_components(
             )
             pp_components.append(Undersampler)
 
-    if estimator_class.model_family == ModelFamily.LINEAR_MODEL:
+    if estimator_class.model_family == ModelFamily.LINEAR_MODEL or estimator_class.model_family == ModelFamily.SVM:
         pp_components.append(StandardScaler)
 
     return pp_components
