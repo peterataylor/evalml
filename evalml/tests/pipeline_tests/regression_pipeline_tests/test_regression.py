@@ -76,9 +76,7 @@ def test_invalid_targets_regression_pipeline(
 
 def test_woodwork_regression_pipeline(diabetes_local, linear_regression_pipeline_class):
     X, y = diabetes_local
-    regression_pipeline = linear_regression_pipeline_class(
-        parameters={"Linear Regressor": {"n_jobs": 1}}
-    )
+    regression_pipeline = linear_regression_pipeline_class(parameters={})
     regression_pipeline.fit(X, y)
     assert not pd.isnull(regression_pipeline.predict(X)).any()
 

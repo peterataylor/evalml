@@ -406,7 +406,7 @@ def test_describe_component():
     }
     assert linear_regressor.describe(return_dict=True) == {
         "name": "Linear Regressor",
-        "parameters": {"fit_intercept": True, "normalize": False, "n_jobs": -1},
+        "parameters": {"fit_intercept": True, "normalize": False, "alpha": 1},
     }
     assert svm_classifier.describe(return_dict=True) == {
         "name": "SVM Classifier",

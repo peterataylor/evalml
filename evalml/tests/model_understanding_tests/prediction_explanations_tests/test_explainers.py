@@ -1153,9 +1153,7 @@ def test_json_serialization(
     if problem_type == problem_type.REGRESSION:
         X, y = X_y_regression
         y = pd.Series(y)
-        pipeline = linear_regression_pipeline_class(
-            parameters={"Linear Regressor": {"n_jobs": 1}}
-        )
+        pipeline = linear_regression_pipeline_class(parameters={})
     elif problem_type == problem_type.BINARY:
         X, y = X_y_binary
         y = pd.Series(y).astype("str")

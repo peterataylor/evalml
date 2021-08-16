@@ -1349,9 +1349,7 @@ def test_pipeline_not_fitted_error(
         )
     elif problem_type == ProblemTypes.REGRESSION:
         X, y = X_y_regression
-        clf = linear_regression_pipeline_class(
-            parameters={"Linear Regressor": {"n_jobs": 1}}
-        )
+        clf = linear_regression_pipeline_class(parameters={})
 
     with pytest.raises(PipelineNotYetFittedError):
         clf.predict(X)
@@ -1419,9 +1417,7 @@ def test_nonlinear_pipeline_not_fitted_error(
         )
     elif problem_type == ProblemTypes.REGRESSION:
         X, y = X_y_regression
-        clf = nonlinear_regression_pipeline_class(
-            parameters={"Linear Regressor": {"n_jobs": 1}}
-        )
+        clf = nonlinear_regression_pipeline_class(parameters={})
 
     with pytest.raises(PipelineNotYetFittedError):
         clf.predict(X)
@@ -1723,9 +1719,7 @@ def test_pipeline_equality_different_fitted_data(
         )
         X, y = X_y_multi
     elif problem_type == ProblemTypes.REGRESSION:
-        pipeline = linear_regression_pipeline_class(
-            parameters={"Linear Regressor": {"n_jobs": 1}}
-        )
+        pipeline = linear_regression_pipeline_class(parameters={})
         X, y = X_y_regression
 
     pipeline_diff_data = pipeline.clone()
@@ -1984,9 +1978,7 @@ def test_predict_has_input_target_name(
 
     elif problem_type == ProblemTypes.REGRESSION:
         X, y = X_y_regression
-        clf = linear_regression_pipeline_class(
-            parameters={"Linear Regressor": {"n_jobs": 1}}
-        )
+        clf = linear_regression_pipeline_class(parameters={})
 
     elif problem_type == ProblemTypes.TIME_SERIES_REGRESSION:
         X, y = ts_data

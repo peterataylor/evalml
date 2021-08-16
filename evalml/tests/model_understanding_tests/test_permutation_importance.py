@@ -545,9 +545,7 @@ def test_get_permutation_importance_regression(
 ):
     X = pd.DataFrame([1, 2, 1, 2, 1, 2, 1, 2, 1, 2])
     y = pd.Series([1, 2, 1, 2, 1, 2, 1, 2, 1, 2])
-    pipeline = linear_regression_pipeline_class(
-        parameters={"Linear Regressor": {"n_jobs": 1}}, random_seed=42
-    )
+    pipeline = linear_regression_pipeline_class(parameters={}, random_seed=42)
     pipeline.fit(X, y)
 
     for objective in regression_test_objectives:

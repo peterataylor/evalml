@@ -1,4 +1,5 @@
-from sklearn.linear_model import LinearRegression as SKLinearRegression
+from sklearn.linear_model import Ridge as SKLinearRegression
+from skopt.space import Real
 
 from evalml.model_family import ModelFamily
 from evalml.pipelines.components.estimators import Estimator
@@ -20,10 +21,15 @@ class LinearRegressor(Estimator):
     """
 
     name = "Linear Regressor"
-    hyperparameter_ranges = {"fit_intercept": [True, False], "normalize": [True, False]}
+    hyperparameter_ranges = {
+        "fit_intercept": [True, False],
+        "normalize": [True, False],
+        "alpha": Real(0.05, 5),
+    }
     """{
         "fit_intercept": [True, False],
-        "normalize": [True, False]
+        "normalize": [True, False],
+        "alpha": Real(0.05, 5)
     }"""
     model_family = ModelFamily.LINEAR_MODEL
     """ModelFamily.LINEAR_MODEL"""
@@ -37,12 +43,12 @@ class LinearRegressor(Estimator):
     ]"""
 
     def __init__(
-        self, fit_intercept=True, normalize=False, n_jobs=-1, random_seed=0, **kwargs
+        self, alpha=1.0, fit_intercept=True, normalize=False, random_seed=0, **kwargs
     ):
         parameters = {
             "fit_intercept": fit_intercept,
             "normalize": normalize,
-            "n_jobs": n_jobs,
+            "alpha": alpha,
         }
         parameters.update(kwargs)
         linear_regressor = SKLinearRegression(**parameters)

@@ -94,9 +94,7 @@ def test_partial_dependence_problem_types(
 
     elif problem_type == ProblemTypes.REGRESSION:
         X, y = X_y_regression
-        pipeline = linear_regression_pipeline_class(
-            parameters={"Linear Regressor": {"n_jobs": 1}}
-        )
+        pipeline = linear_regression_pipeline_class(parameters={})
 
     X = make_data_type(data_type, X)
     pipeline.fit(X, y)
@@ -131,7 +129,6 @@ def test_partial_dependence_string_feature_name(
 def test_partial_dependence_with_non_numeric_columns(
     data_type,
     linear_regression_pipeline_class,
-    logistic_regression_binary_pipeline_class,
 ):
     X = pd.DataFrame(
         {
@@ -144,9 +141,7 @@ def test_partial_dependence_with_non_numeric_columns(
     if data_type == "ww":
         X.ww.init()
     y = [0, 0.2, 1.4, 1]
-    pipeline = linear_regression_pipeline_class(
-        parameters={"Linear Regressor": {"n_jobs": 1}}
-    )
+    pipeline = linear_regression_pipeline_class(parameters={})
     pipeline.fit(X, y)
     part_dep = partial_dependence(pipeline, X, features="numeric")
     assert list(part_dep.columns) == ["feature_values", "partial_dependence"]
@@ -791,7 +786,7 @@ def test_graph_partial_dependence_regression_and_binary_categorical(
         )
     else:
         X, y = X_y_regression
-        pipeline = linear_regression_pipeline_class({"Linear Regressor": {"n_jobs": 1}})
+        pipeline = linear_regression_pipeline_class({})
 
     X = pd.DataFrame(X, columns=[str(i) for i in range(X.shape[1])])
     y = pd.Series(y)

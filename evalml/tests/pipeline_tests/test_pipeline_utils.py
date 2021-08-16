@@ -303,9 +303,7 @@ def test_stacked_estimator_in_pipeline(
         input_pipelines = [
             RegressionPipeline([regressor]) for regressor in stackable_regressors
         ]
-        comparison_pipeline = linear_regression_pipeline_class(
-            parameters={"Linear Regressor": {"n_jobs": 1}}
-        )
+        comparison_pipeline = linear_regression_pipeline_class(parameters={})
         objective = "R2"
     parameters = {
         stacking_component_name: {"input_pipelines": input_pipelines, "n_jobs": 1}
