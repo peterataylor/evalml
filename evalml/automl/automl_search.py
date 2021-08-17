@@ -1133,6 +1133,7 @@ class AutoMLSearch:
             "high_variance_cv": high_variance_cv,
             "training_time": training_time,
             "cv_data": cv_data,
+            "coefficients": [c['coefficients'].tolist() for c in cv_data],
             "percent_better_than_baseline_all_objectives": percent_better_than_baseline,
             "percent_better_than_baseline": percent_better_than_baseline[
                 self.objective.name
@@ -1333,6 +1334,7 @@ class AutoMLSearch:
         pipeline_results_cols = [
             "id",
             "pipeline_name",
+            "coefficients",
             "mean_cv_score",
             "standard_deviation_cv_score",
             "validation_score",

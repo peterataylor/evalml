@@ -258,6 +258,7 @@ def train_and_score_pipeline(
             "all_objective_scores": ordered_scores,
             "mean_cv_score": score,
             "binary_classification_threshold": None,
+            "coefficients": cv_pipeline.estimator.feature_importance
         }
         if (
             is_binary(automl_config.problem_type)
