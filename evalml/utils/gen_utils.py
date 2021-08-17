@@ -182,7 +182,7 @@ _not_used_in_automl = {
     "SVMClassifier",
     "SVMRegressor",
     "ProphetRegressor",
-    "ElasticNetRegressor"
+    "LinearRegressor",
 }
 
 
