@@ -50,7 +50,7 @@ class SVMClassifier(Estimator):
 
     def __init__(
         self,
-        C=5.0,
+        C=1.0,
         kernel="rbf",
         gamma="scale",
         probability=True,

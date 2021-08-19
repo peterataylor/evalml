@@ -23,12 +23,12 @@ class SVMRegressor(Estimator):
     name = "SVM Regressor"
     hyperparameter_ranges = {
         "C": Real(0, 10),
-        "kernel": ["linear", "poly", "rbf", "sigmoid", "precomputed"],
+        "kernel": ["linear", "poly", "rbf", "sigmoid",
         "gamma": ["scale", "auto"],
     }
     """{
         "C": Real(0, 10),
-        "kernel": ["linear", "poly", "rbf", "sigmoid", "precomputed"],
+        "kernel": ["linear", "poly", "rbf", "sigmoid"],
         "gamma": ["scale", "auto"],
     }"""
     model_family = ModelFamily.SVM
