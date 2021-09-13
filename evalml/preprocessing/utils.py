@@ -62,6 +62,7 @@ def split_data(
     Returns:
         pd.DataFrame, pd.DataFrame, pd.Series, pd.Series: Feature and target data each split into train and test sets
     """
+    assert False
     X = infer_feature_types(X)
     y = infer_feature_types(y)
 
