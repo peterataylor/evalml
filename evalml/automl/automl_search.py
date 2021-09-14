@@ -440,6 +440,7 @@ class AutoMLSearch:
         engine="sequential",
         verbose=False,
     ):
+        assert False
         self.verbose = verbose
         if verbose:
             self.logger = get_logger(f"{__name__}.verbose")
