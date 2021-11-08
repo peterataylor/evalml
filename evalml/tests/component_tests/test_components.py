@@ -26,7 +26,6 @@ from evalml.pipelines.components import (
     CatBoostRegressor,
     ComponentBase,
     DateTimeFeaturizer,
-    DelayedFeatureTransformer,
     DFSTransformer,
     DropColumns,
     DropNullColumns,
@@ -60,6 +59,7 @@ from evalml.pipelines.components import (
     TargetImputer,
     TextFeaturizer,
     TimeSeriesBaselineEstimator,
+    TimeSeriesFeaturizer,
     Transformer,
     Undersampler,
     XGBoostClassifier,
@@ -893,9 +893,9 @@ def test_transformer_transform_output_type(X_y_binary):
             elif isinstance(component, DFSTransformer):
                 assert transform_output.shape[0] == X.shape[0]
                 assert transform_output.shape[1] >= X.shape[1]
-            elif isinstance(component, DelayedFeatureTransformer):
+            elif isinstance(component, TimeSeriesFeaturizer):
                 # We just want to check that DelayedFeaturesTransformer outputs a DataFrame
-                # The dataframe shape and index are checked in test_delayed_features_transformer.py
+                # The dataframe shape and index are checked in test_time_series_featurizer.py
                 continue
             elif component.modifies_target:
                 assert transform_output[0].shape == X.shape

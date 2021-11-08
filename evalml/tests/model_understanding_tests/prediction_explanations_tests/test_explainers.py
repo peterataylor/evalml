@@ -968,7 +968,7 @@ def test_explain_predictions_time_series(ts_data):
     X, y = ts_data
 
     ts_pipeline = TimeSeriesRegressionPipeline(
-        component_graph=["Delayed Feature Transformer", "Random Forest Regressor"],
+        component_graph=["Time Series Featurizer", "Random Forest Regressor"],
         parameters={
             "pipeline": {
                 "date_index": None,
@@ -1017,7 +1017,7 @@ def test_explain_predictions_best_worst_time_series(
         y = y % 2
 
     ts_pipeline = pipeline_class(
-        component_graph=["Delayed Feature Transformer", estimator],
+        component_graph=["Time Series Featurizer", estimator],
         parameters={
             "pipeline": {
                 "date_index": None,

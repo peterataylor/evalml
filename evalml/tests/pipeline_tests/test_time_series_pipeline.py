@@ -14,7 +14,7 @@ from evalml.pipelines import (
     TimeSeriesMulticlassClassificationPipeline,
     TimeSeriesRegressionPipeline,
 )
-from evalml.pipelines.components import DelayedFeatureTransformer, Transformer
+from evalml.pipelines.components import TimeSeriesFeaturizer, Transformer
 from evalml.pipelines.utils import _get_pipeline_base_class
 from evalml.preprocessing.utils import is_classification
 from evalml.problem_types import ProblemTypes
@@ -93,11 +93,11 @@ def test_time_series_pipeline_validates_holdout_data(
 )
 @pytest.mark.parametrize(
     "components",
-    [["One Hot Encoder"], ["Delayed Feature Transformer", "One Hot Encoder"]],
+    [["One Hot Encoder"], ["Time Series Featurizer", "One Hot Encoder"]],
 )
 def test_time_series_pipeline_init(pipeline_class, estimator, components):
     component_graph = components + [estimator]
-    if "Delayed Feature Transformer" not in components:
+    if "Time Series Featurizer" not in components:
         pl = pipeline_class(
             component_graph=component_graph,
             parameters={
@@ -109,7 +109,7 @@ def test_time_series_pipeline_init(pipeline_class, estimator, components):
                 }
             },
         )
-        assert "Delayed Feature Transformer" not in pl.parameters
+        assert "Time Series Featurizer" not in pl.parameters
         assert pl.parameters["pipeline"] == {
             "forecast_horizon": 3,
             "gap": 0,
@@ -118,7 +118,7 @@ def test_time_series_pipeline_init(pipeline_class, estimator, components):
         }
     else:
         parameters = {
-            "Delayed Feature Transformer": {
+            "Time Series Featurizer": {
                 "date_index": None,
                 "gap": 0,
                 "max_delay": 5,
@@ -132,7 +132,7 @@ def test_time_series_pipeline_init(pipeline_class, estimator, components):
             },
         }
         pl = pipeline_class(component_graph=component_graph, parameters=parameters)
-        assert pl.parameters["Delayed Feature Transformer"] == {
+        assert pl.parameters["Time Series Featurizer"] == {
             "date_index": None,
             "gap": 0,
             "forecast_horizon": 3,
@@ -208,9 +208,9 @@ def test_fit_drop_nans_before_estimator(
         expected_target = np.arange(1, 32)
 
     pl = pipeline_class(
-        component_graph=["Delayed Feature Transformer", estimator_name],
+        component_graph=["Time Series Featurizer", estimator_name],
         parameters={
-            "Delayed Feature Transformer": {
+            "Time Series Featurizer": {
                 "date_index": None,
                 "gap": gap,
                 "forecast_horizon": forecast_horizon,
@@ -270,7 +270,7 @@ def test_transform_all_but_final_for_time_series(
 ):
     X, y = ts_data
     pipeline = TimeSeriesRegressionPipeline(
-        ["Delayed Feature Transformer", "Random Forest Regressor"],
+        ["Time Series Featurizer", "Random Forest Regressor"],
         parameters={
             "pipeline": {
                 "forecast_horizon": forecast_horizon,
@@ -279,7 +279,7 @@ def test_transform_all_but_final_for_time_series(
                 "date_index": None,
             },
             "Random Forest Regressor": {"n_jobs": 1},
-            "Delayed Feature Transformer": {
+            "Time Series Featurizer": {
                 "max_delay": max_delay,
                 "gap": gap,
                 "forecast_horizon": forecast_horizon,
@@ -291,7 +291,7 @@ def test_transform_all_but_final_for_time_series(
     X_validation, y_validation = X[15:], y[15:]
     pipeline.fit(X_train, y_train)
     features = pipeline.transform_all_but_final(X_validation, y_validation)
-    delayer = DelayedFeatureTransformer(
+    delayer = TimeSeriesFeaturizer(
         max_delay=max_delay, gap=gap, forecast_horizon=forecast_horizon, conf_level=1.0
     )
     assert_frame_equal(features, delayer.fit_transform(X_validation, y_validation))
@@ -363,7 +363,7 @@ def test_predict_and_predict_in_sample(
     expected_features_in_sample = expected_features.ww.iloc[20:]
     expected_features_pred = expected_features[20 + gap : 20 + gap + forecast_horizon]
     if include_delayed_features:
-        component_graph = ["Delayed Feature Transformer"] + component_graph
+        component_graph = ["Time Series Featurizer"] + component_graph
         delayer_params = {
             "date_index": None,
             "gap": gap,
@@ -373,8 +373,8 @@ def test_predict_and_predict_in_sample(
             "delay_target": True,
             "conf_level": 1.0,
         }
-        parameters.update({"Delayed Feature Transformer": delayer_params})
-        expected_features = DelayedFeatureTransformer(**delayer_params).fit_transform(
+        parameters.update({"Time Series Featurizer": delayer_params})
+        expected_features = TimeSeriesFeaturizer(**delayer_params).fit_transform(
             X, target
         )
         expected_features_in_sample = expected_features.ww.iloc[20:]
@@ -437,7 +437,7 @@ def test_predict_and_predict_in_sample_with_date_index(
 
     component_graph = [
         "DateTime Featurization Component",
-        "Delayed Feature Transformer",
+        "Time Series Featurizer",
         estimator_name,
     ]
     delayer_params = {
@@ -456,12 +456,12 @@ def test_predict_and_predict_in_sample_with_date_index(
             "max_delay": 3,
             "forecast_horizon": 1,
         },
-        "Delayed Feature Transformer": delayer_params,
+        "Time Series Featurizer": delayer_params,
         estimator_name: {"n_jobs": 1},
     }
 
     feature_pipeline = pipeline_class(
-        ["DateTime Featurization Component", "Delayed Feature Transformer"],
+        ["DateTime Featurization Component", "Time Series Featurizer"],
         parameters=parameters,
     )
     feature_pipeline.fit(X, target)
@@ -552,9 +552,9 @@ def test_ts_score(
     target_index = pd.date_range(f"2020-10-{last_train_date + 1}", f"2020-10-31")
 
     pl = pipeline_class(
-        component_graph=["Delayed Feature Transformer", estimator_name],
+        component_graph=["Time Series Featurizer", estimator_name],
         parameters={
-            "Delayed Feature Transformer": {
+            "Time Series Featurizer": {
                 "date_index": None,
                 "gap": gap,
                 "max_delay": max_delay,
@@ -634,19 +634,19 @@ def test_classification_pipeline_encodes_targets(
     pl = pipeline_class(
         component_graph={
             "Label Encoder": ["Label Encoder", "X", "y"],
-            "Delayed Feature Transformer": [
-                "Delayed Feature Transformer",
+            "Time Series Featurizer": [
+                "Time Series Featurizer",
                 "Label Encoder.x",
                 "Label Encoder.y",
             ],
             "Logistic Regression Classifier": [
                 "Logistic Regression Classifier",
-                "Delayed Feature Transformer.x",
+                "Time Series Featurizer.x",
                 "Label Encoder.y",
             ],
         },
         parameters={
-            "Delayed Feature Transformer": {
+            "Time Series Featurizer": {
                 "date_index": None,
                 "gap": 0,
                 "max_delay": 1,
@@ -1098,10 +1098,10 @@ def test_time_series_pipeline_with_detrender(ts_data):
     X, y = ts_data
     component_graph = {
         "Polynomial Detrender": ["Polynomial Detrender", "X", "y"],
-        "DelayedFeatures": ["Delayed Feature Transformer", "X", "y"],
+        "Time Series Featurizer": ["Time Series Featurizer", "X", "y"],
         "Regressor": [
             "Linear Regressor",
-            "DelayedFeatures.x",
+            "Time Series Featurizer.x",
             "Polynomial Detrender.y",
         ],
     }
@@ -1114,7 +1114,7 @@ def test_time_series_pipeline_with_detrender(ts_data):
                 "date_index": None,
                 "forecast_horizon": 7,
             },
-            "DelayedFeatures": {"max_delay": 2, "gap": 1, "forecast_horizon": 10},
+            "Time Series Featurizer": {"max_delay": 2, "gap": 1, "forecast_horizon": 10},
         },
     )
     X_train, y_train = X[:23], y[:23]

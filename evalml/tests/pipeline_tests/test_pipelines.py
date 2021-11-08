@@ -1993,7 +1993,7 @@ def test_predict_has_input_target_name(
                     "date_index": None,
                     "forecast_horizon": 2,
                 },
-                "Delayed Feature Transformer": {
+                "Time Series Featurizer": {
                     "gap": 0,
                     "max_delay": 0,
                     "forecast_horizon": 2,
@@ -2008,7 +2008,7 @@ def test_predict_has_input_target_name(
         clf = time_series_binary_classification_pipeline_class(
             parameters={
                 "Logistic Regression Classifier": {"n_jobs": 1},
-                "Delayed Feature Transformer": {
+                "Time Series Featurizer": {
                     "gap": 0,
                     "max_delay": 0,
                     "forecast_horizon": 2,
@@ -2029,7 +2029,7 @@ def test_predict_has_input_target_name(
         clf = time_series_multiclass_classification_pipeline_class(
             parameters={
                 "Logistic Regression Classifier": {"n_jobs": 1},
-                "Delayed Feature Transformer": {
+                "Time Series Featurizer": {
                     "gap": 0,
                     "max_delay": 0,
                     "forecast_horizon": 2,

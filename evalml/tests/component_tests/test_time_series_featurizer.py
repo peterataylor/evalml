@@ -13,7 +13,10 @@ from woodwork.logical_types import (
     Integer,
 )
 
-from evalml.pipelines import DelayedFeatureTransformer
+from evalml.pipelines import TimeSeriesFeaturizer
+
+ROLLING_TRANSFORM_METHOD_NAME = "_compute_rolling_transforms"
+DELAYED_FEATURES_METHOD_NAME = "_compute_delays"
 
 
 @pytest.fixture
@@ -24,7 +27,7 @@ def delayed_features_data():
 
 
 def test_delayed_features_transformer_init():
-    delayed_features = DelayedFeatureTransformer(
+    delayed_features = TimeSeriesFeaturizer(
         max_delay=4,
         delay_features=True,
         delay_target=False,
@@ -47,12 +50,12 @@ def test_delayed_features_init_raises_if_conf_level_not_in_range(conf_level):
     with pytest.raises(
         ValueError, match="Parameter conf_level must be in range \\(0, 1\\]"
     ):
-        DelayedFeatureTransformer(conf_level=conf_level)
+        TimeSeriesFeaturizer(conf_level=conf_level)
 
 
 def test_delayed_features_init_raises_if_conf_level_None():
     with pytest.raises(ValueError, match="Parameter conf_level cannot be None"):
-        DelayedFeatureTransformer(conf_level=None)
+        TimeSeriesFeaturizer(conf_level=None)
 
 
 def encode_y_as_string(y):
@@ -82,8 +85,12 @@ def encode_X_y_as_strings(X, y, encode_X_as_str, encode_y_as_str):
 
 @pytest.mark.parametrize("encode_X_as_str", [True, False])
 @pytest.mark.parametrize("encode_y_as_str", [True, False])
+@patch(
+    f"evalml.pipelines.TimeSeriesFeaturizer.{ROLLING_TRANSFORM_METHOD_NAME}",
+    return_value=pd.DataFrame(),
+)
 def test_delayed_feature_extractor_maxdelay3_forecasthorizon1_gap0(
-    encode_X_as_str, encode_y_as_str, delayed_features_data
+    mock_roll, encode_X_as_str, encode_y_as_str, delayed_features_data
 ):
     X, y = delayed_features_data
     X, X_answer, y, y_answer = encode_X_y_as_strings(
@@ -103,7 +110,7 @@ def test_delayed_feature_extractor_maxdelay3_forecasthorizon1_gap0(
     )
     assert_frame_equal(
         answer,
-        DelayedFeatureTransformer(
+        TimeSeriesFeaturizer(
             max_delay=3, gap=0, forecast_horizon=1, conf_level=1.0
         ).fit_transform(X=X, y=y),
     )
@@ -118,7 +125,7 @@ def test_delayed_feature_extractor_maxdelay3_forecasthorizon1_gap0(
     )
     assert_frame_equal(
         answer_only_y,
-        DelayedFeatureTransformer(
+        TimeSeriesFeaturizer(
             max_delay=3, gap=0, forecast_horizon=1, conf_level=1.0
         ).fit_transform(X=None, y=y),
     )
@@ -126,8 +133,12 @@ def test_delayed_feature_extractor_maxdelay3_forecasthorizon1_gap0(
 
 @pytest.mark.parametrize("encode_X_as_str", [True, False])
 @pytest.mark.parametrize("encode_y_as_str", [True, False])
+@patch(
+    f"evalml.pipelines.TimeSeriesFeaturizer.{ROLLING_TRANSFORM_METHOD_NAME}",
+    return_value=pd.DataFrame(),
+)
 def test_delayed_feature_extractor_maxdelay5_forecasthorizon1_gap0(
-    encode_X_as_str, encode_y_as_str, delayed_features_data
+    mock_roll, encode_X_as_str, encode_y_as_str, delayed_features_data
 ):
     X, y = delayed_features_data
     X, X_answer, y, y_answer = encode_X_y_as_strings(
@@ -151,7 +162,7 @@ def test_delayed_feature_extractor_maxdelay5_forecasthorizon1_gap0(
     )
     assert_frame_equal(
         answer,
-        DelayedFeatureTransformer(
+        TimeSeriesFeaturizer(
             max_delay=5, gap=0, forecast_horizon=1, conf_level=1.0
         ).fit_transform(X, y),
     )
@@ -168,7 +179,7 @@ def test_delayed_feature_extractor_maxdelay5_forecasthorizon1_gap0(
     )
     assert_frame_equal(
         answer_only_y,
-        DelayedFeatureTransformer(
+        TimeSeriesFeaturizer(
             max_delay=5, gap=0, forecast_horizon=1, conf_level=1.0
         ).fit_transform(X=None, y=y),
     )
@@ -176,8 +187,12 @@ def test_delayed_feature_extractor_maxdelay5_forecasthorizon1_gap0(
 
 @pytest.mark.parametrize("encode_X_as_str", [True, False])
 @pytest.mark.parametrize("encode_y_as_str", [True, False])
+@patch(
+    f"evalml.pipelines.TimeSeriesFeaturizer.{ROLLING_TRANSFORM_METHOD_NAME}",
+    return_value=pd.DataFrame(),
+)
 def test_delayed_feature_extractor_maxdelay3_forecasthorizon7_gap1(
-    encode_X_as_str, encode_y_as_str, delayed_features_data
+    mock_roll, encode_X_as_str, encode_y_as_str, delayed_features_data
 ):
     X, y = delayed_features_data
     X, X_answer, y, y_answer = encode_X_y_as_strings(
@@ -198,7 +213,7 @@ def test_delayed_feature_extractor_maxdelay3_forecasthorizon7_gap1(
 
     assert_frame_equal(
         answer,
-        DelayedFeatureTransformer(
+        TimeSeriesFeaturizer(
             max_delay=3, forecast_horizon=7, gap=1, conf_level=1.0
         ).fit_transform(X, y),
     )
@@ -213,13 +228,17 @@ def test_delayed_feature_extractor_maxdelay3_forecasthorizon7_gap1(
     )
     assert_frame_equal(
         answer_only_y,
-        DelayedFeatureTransformer(
+        TimeSeriesFeaturizer(
             max_delay=3, forecast_horizon=7, gap=1, conf_level=1.0
         ).fit_transform(X=None, y=y),
     )
 
 
-def test_delayed_feature_extractor_numpy(delayed_features_data):
+@patch(
+    f"evalml.pipelines.TimeSeriesFeaturizer.{ROLLING_TRANSFORM_METHOD_NAME}",
+    return_value=pd.DataFrame(),
+)
+def test_delayed_feature_extractor_numpy(mock_roll, delayed_features_data):
     X, y = delayed_features_data
     X, X_answer, y, y_answer = encode_X_y_as_strings(X, y, False, False)
     X_np = X.values
@@ -238,7 +257,7 @@ def test_delayed_feature_extractor_numpy(delayed_features_data):
     )
     assert_frame_equal(
         answer,
-        DelayedFeatureTransformer(
+        TimeSeriesFeaturizer(
             max_delay=3, forecast_horizon=7, gap=1, conf_level=1.0
         ).fit_transform(X_np, y_np),
     )
@@ -253,7 +272,7 @@ def test_delayed_feature_extractor_numpy(delayed_features_data):
     )
     assert_frame_equal(
         answer_only_y,
-        DelayedFeatureTransformer(
+        TimeSeriesFeaturizer(
             max_delay=3, forecast_horizon=7, gap=1, conf_level=1.0
         ).fit_transform(X=None, y=y_np),
     )
@@ -264,7 +283,12 @@ def test_delayed_feature_extractor_numpy(delayed_features_data):
 )
 @pytest.mark.parametrize("encode_X_as_str", [True, False])
 @pytest.mark.parametrize("encode_y_as_str", [True, False])
+@patch(
+    f"evalml.pipelines.TimeSeriesFeaturizer.{ROLLING_TRANSFORM_METHOD_NAME}",
+    return_value=pd.DataFrame(),
+)
 def test_lagged_feature_extractor_delay_features_delay_target(
+    mock_roll,
     encode_y_as_str,
     encode_X_as_str,
     delay_features,
@@ -297,7 +321,7 @@ def test_lagged_feature_extractor_delay_features_delay_target(
             columns=[c for c in all_delays.columns if "target" in c]
         )
 
-    transformer = DelayedFeatureTransformer(
+    transformer = TimeSeriesFeaturizer(
         max_delay=3,
         forecast_horizon=1,
         delay_features=delay_features,
@@ -312,7 +336,12 @@ def test_lagged_feature_extractor_delay_features_delay_target(
 )
 @pytest.mark.parametrize("encode_X_as_str", [True, False])
 @pytest.mark.parametrize("encode_y_as_str", [True, False])
+@patch(
+    f"evalml.pipelines.TimeSeriesFeaturizer.{ROLLING_TRANSFORM_METHOD_NAME}",
+    return_value=pd.DataFrame(),
+)
 def test_lagged_feature_extractor_delay_target(
+    mock_roll,
     encode_y_as_str,
     encode_X_as_str,
     delay_features,
@@ -334,7 +363,7 @@ def test_lagged_feature_extractor_delay_target(
             }
         )
 
-    transformer = DelayedFeatureTransformer(
+    transformer = TimeSeriesFeaturizer(
         max_delay=3,
         forecast_horizon=1,
         delay_features=delay_features,
@@ -371,13 +400,52 @@ def test_delay_feature_transformer_supports_custom_index(
         },
         index=pd.RangeIndex(50, 81),
     )
+    if not encode_y_as_str and not encode_X_as_str:
+        rolling_features = pd.DataFrame(
+            {
+                "feature_rolling_mean": X_answer.feature.shift(7).rolling(4, 4).mean(),
+                "target_rolling_mean": y_answer.shift(7).rolling(4, 4).mean(),
+            },
+            index=pd.RangeIndex(50, 81),
+        )
+        rolling_features_target_only = pd.DataFrame(
+            {
+                "target_rolling_mean": y_answer.shift(7).rolling(4, 4).mean(),
+            },
+            index=pd.RangeIndex(50, 81),
+        )
+    elif encode_y_as_str and not encode_X_as_str:
+        rolling_features = pd.DataFrame(
+            {
+                "feature_rolling_mean": X_answer.feature.shift(7).rolling(4, 4).mean(),
+            },
+            index=pd.RangeIndex(50, 81),
+        )
+        rolling_features_target_only = pd.DataFrame()
+    elif not encode_y_as_str and encode_X_as_str:
+        rolling_features = pd.DataFrame(
+            {
+                "target_rolling_mean": y_answer.shift(7).rolling(4, 4).mean(),
+            },
+            index=pd.RangeIndex(50, 81),
+        )
+        rolling_features_target_only = pd.DataFrame(
+            {
+                "target_rolling_mean": y_answer.shift(7).rolling(4, 4).mean(),
+            },
+            index=pd.RangeIndex(50, 81),
+        )
+    else:
+        rolling_features = pd.DataFrame()
+        rolling_features_target_only = pd.DataFrame()
 
     X = make_data_type(data_type, X)
     y = make_data_type(data_type, y)
 
+    answer = ww.concat_columns([answer, rolling_features])
     assert_frame_equal(
         answer,
-        DelayedFeatureTransformer(
+        TimeSeriesFeaturizer(
             max_delay=3, forecast_horizon=7, conf_level=1.0
         ).fit_transform(X, y),
     )
@@ -391,9 +459,10 @@ def test_delay_feature_transformer_supports_custom_index(
         },
         index=pd.RangeIndex(50, 81),
     )
+    answer_only_y = ww.concat_columns([answer_only_y, rolling_features_target_only])
     assert_frame_equal(
         answer_only_y,
-        DelayedFeatureTransformer(
+        TimeSeriesFeaturizer(
             max_delay=3, forecast_horizon=7, conf_level=1.0
         ).fit_transform(X=None, y=y),
     )
@@ -416,7 +485,7 @@ def test_delay_feature_transformer_multiple_categorical_columns(delayed_features
     )
     assert_frame_equal(
         answer,
-        DelayedFeatureTransformer(
+        TimeSeriesFeaturizer(
             max_delay=1, forecast_horizon=9, gap=2, conf_level=1.0
         ).fit_transform(X, y),
     )
@@ -428,11 +497,12 @@ def test_delay_feature_transformer_y_is_none(delayed_features_data):
         {
             "feature_delay_11": X.feature.shift(11),
             "feature_delay_12": X.feature.shift(12),
+            "feature_rolling_mean": X.feature.shift(11).rolling(2, 2).mean(),
         }
     )
     assert_frame_equal(
         answer,
-        DelayedFeatureTransformer(
+        TimeSeriesFeaturizer(
             max_delay=1, forecast_horizon=11, conf_level=1.0
         ).fit_transform(X, y=None),
     )
@@ -441,11 +511,73 @@ def test_delay_feature_transformer_y_is_none(delayed_features_data):
 def test_delayed_feature_transformer_does_not_modify_input_data(delayed_features_data):
     X, _ = delayed_features_data
     expected = X.copy()
-    _ = DelayedFeatureTransformer(
+    _ = TimeSeriesFeaturizer(
         max_delay=1, forecast_horizon=11, conf_level=1.0
     ).fit_transform(X, y=None)
 
     assert_frame_equal(X, expected)
+
+
+@pytest.mark.parametrize("gap", [0, 1, 2])
+@pytest.mark.parametrize("forecast_horizon", [1, 5, 10])
+@pytest.mark.parametrize("max_delay", [1, 3, 9])
+@patch(
+    f"evalml.pipelines.TimeSeriesFeaturizer.{DELAYED_FEATURES_METHOD_NAME}",
+)
+def test_time_series_featurizer_rolling_mean(
+    mock_delay, max_delay, forecast_horizon, gap, delayed_features_data
+):
+    X, y = delayed_features_data
+    mock_delay.return_value = X
+    output = TimeSeriesFeaturizer(
+        max_delay=max_delay, forecast_horizon=forecast_horizon, gap=gap
+    ).fit_transform(X, y)
+    rolling_means = (
+        X.feature.shift(forecast_horizon + gap)
+        .rolling(max_delay + 1, max_delay + 1)
+        .mean()
+    )
+    rolling_means_target = (
+        y.shift(forecast_horizon + gap).rolling(max_delay + 1, max_delay + 1).mean()
+    )
+    expected = pd.DataFrame(
+        {
+            "feature_rolling_mean": rolling_means,
+            "target_rolling_mean": rolling_means_target,
+        }
+    )
+    assert_frame_equal(output, expected)
+
+
+@pytest.mark.parametrize("gap", [0, 1, 2])
+@pytest.mark.parametrize("forecast_horizon", [1, 5, 10])
+@pytest.mark.parametrize("max_delay", [1, 3, 9])
+def test_time_series_featurizer_does_not_need_to_delay_to_compute_means(
+    max_delay, forecast_horizon, gap, delayed_features_data
+):
+    X, y = delayed_features_data
+    output = TimeSeriesFeaturizer(
+        max_delay=max_delay,
+        forecast_horizon=forecast_horizon,
+        gap=gap,
+        delay_features=False,
+        delay_target=False,
+    ).fit_transform(X, y)
+    rolling_means = (
+        X.feature.shift(forecast_horizon + gap)
+        .rolling(max_delay + 1, max_delay + 1)
+        .mean()
+    )
+    rolling_means_target = (
+        y.shift(forecast_horizon + gap).rolling(max_delay + 1, max_delay + 1).mean()
+    )
+    expected = pd.DataFrame(
+        {
+            "feature_rolling_mean": rolling_means,
+            "target_rolling_mean": rolling_means_target,
+        }
+    )
+    assert_frame_equal(output, expected)
 
 
 @pytest.mark.parametrize("peaks", [[14, 21, 28], [32, 45], [18, 29, 56], [5, 8, 12]])
@@ -454,13 +586,17 @@ def test_delayed_feature_transformer_does_not_modify_input_data(delayed_features
     [[1, 2, 8, 14, 21], [1, 19, 20, 32], [14, 21, 28, 56, 18], [13, 25, 8]],
 )
 @patch(
-    "evalml.pipelines.components.transformers.preprocessing.delayed_feature_transformer.find_peaks"
+    "evalml.pipelines.components.transformers.preprocessing.time_series_featurizer.find_peaks"
 )
 @patch(
-    "evalml.pipelines.components.transformers.preprocessing.delayed_feature_transformer.acf"
+    "evalml.pipelines.components.transformers.preprocessing.time_series_featurizer.acf"
+)
+@patch(
+    f"evalml.pipelines.TimeSeriesFeaturizer.{ROLLING_TRANSFORM_METHOD_NAME}",
+    return_value=pd.DataFrame(),
 )
 def test_delayed_feature_transformer_conf_level(
-    mock_acf, mock_peaks, peaks, significant_lags
+    mock_roll, mock_acf, mock_peaks, peaks, significant_lags
 ):
     X = pd.DataFrame({"feature": np.arange(10000)})
     y = pd.Series(np.arange(10000))
@@ -482,7 +618,7 @@ def test_delayed_feature_transformer_conf_level(
 
     # Although the conf_level is hard-coded we mock the return values of
     # find_peaks and acf so that we simulate different significant lags.
-    dft = DelayedFeatureTransformer(
+    dft = TimeSeriesFeaturizer(
         max_delay=MAX_DELAY, forecast_horizon=FORECAST_HORIZON, conf_level=0.05, gap=0
     )
     new_X = dft.fit_transform(X, y)
@@ -511,12 +647,17 @@ def test_delayed_feature_transformer_conf_level(
 
 
 @patch(
-    "evalml.pipelines.components.transformers.preprocessing.delayed_feature_transformer.find_peaks"
+    "evalml.pipelines.components.transformers.preprocessing.time_series_featurizer.find_peaks"
 )
 @patch(
-    "evalml.pipelines.components.transformers.preprocessing.delayed_feature_transformer.acf"
+    "evalml.pipelines.components.transformers.preprocessing.time_series_featurizer.acf"
+)
+@patch(
+    f"evalml.pipelines.TimeSeriesFeaturizer.{ROLLING_TRANSFORM_METHOD_NAME}",
+    return_value=pd.DataFrame(),
 )
 def test_delayed_feature_transformer_selects_first_lag_if_none_significant(
+    mock_roll,
     mock_acf,
     mock_peaks,
 ):
@@ -533,7 +674,7 @@ def test_delayed_feature_transformer_selects_first_lag_if_none_significant(
     MAX_DELAY = 50
     FORECAST_HORIZON = 10
 
-    dft = DelayedFeatureTransformer(
+    dft = TimeSeriesFeaturizer(
         max_delay=MAX_DELAY, forecast_horizon=FORECAST_HORIZON, conf_level=0.1, gap=0
     )
     new_X = dft.fit_transform(X, y)
@@ -568,10 +709,14 @@ def test_delayed_feature_transformer_selects_first_lag_if_none_significant(
     ],
 )
 @pytest.mark.parametrize("fit_transform", [True, False])
+@patch(
+    f"evalml.pipelines.TimeSeriesFeaturizer.{ROLLING_TRANSFORM_METHOD_NAME}",
+    return_value=pd.DataFrame(),
+)
 def test_delay_feature_transformer_woodwork_custom_overrides_returned_by_components(
-    X_df, fit_transform
+    mock_roll, X_df, fit_transform
 ):
-    y = pd.Series([1, 2, 1])
+    y = pd.Series([1, 2, 3] * X_df.shape[0])
     override_types = [Integer, Double, Categorical, Datetime, Boolean]
     for logical_type in override_types:
         try:
@@ -582,7 +727,7 @@ def test_delay_feature_transformer_woodwork_custom_overrides_returned_by_compone
         if X.loc[:, 0].isna().all():
             # Casting the fourth and fifth dataframes to datetime will produce all NaNs
             continue
-        dft = DelayedFeatureTransformer(max_delay=1, forecast_horizon=1, conf_level=1.0)
+        dft = TimeSeriesFeaturizer(max_delay=1, forecast_horizon=1, conf_level=1.0)
         if fit_transform:
             transformed = dft.fit_transform(X, y)
         else:

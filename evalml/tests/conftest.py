@@ -773,7 +773,7 @@ def time_series_regression_pipeline_class():
     class TSRegressionPipeline(TimeSeriesRegressionPipeline):
         """Random Forest Regression Pipeline for time series regression problems."""
 
-        component_graph = ["Delayed Feature Transformer", "Random Forest Regressor"]
+        component_graph = ["Time Series Featurizer", "Random Forest Regressor"]
 
         def __init__(self, parameters, random_seed=0):
             super().__init__(
@@ -787,14 +787,14 @@ def time_series_regression_pipeline_class():
 def time_series_classification_component_graph():
     component_graph = {
         "Label Encoder": ["Label Encoder", "X", "y"],
-        "Delayed Feature Transformer": [
-            "Delayed Feature Transformer",
+        "Time Series Featurizer": [
+            "Time Series Featurizer",
             "Label Encoder.x",
             "Label Encoder.y",
         ],
         "Logistic Regression Classifier": [
             "Logistic Regression Classifier",
-            "Delayed Feature Transformer.x",
+            "Time Series Featurizer.x",
             "Label Encoder.y",
         ],
     }
