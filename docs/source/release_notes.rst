@@ -7,6 +7,7 @@ Release Notes
         * Added support for stacked ensemble pipelines to prediction explanations module :pr:`2971`
         * Added integration tests for data checks and data checks actions workflow :pr:`2883`
         * Added an algorithm to ``DelayedFeatureTransformer`` to select better lags :pr:`3005`
+        * Renamed ``DelayedFeatureTransformer`` to ``TimeSeriesFeaturizer`` and enhanced it to compute rolling features :pr:`3028`
     * Fixes
         * Fixed bug where ``Oversampler`` didn't consider boolean columns to be categorical :pr:`2980`
     * Changes
@@ -18,6 +19,7 @@ Release Notes
 .. warning::
 
     **Breaking Changes**
+        * Renamed ``DelayedFeatureTransformer`` to ``TimeSeriesFeaturizer`` :pr:`3028`
 
 **v0.36.0 Oct. 27, 2021**
     * Enhancements
