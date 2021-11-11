@@ -232,11 +232,11 @@ def test_make_pipeline(
                 + email_featurizer
                 + url_featurizer
                 + drop_null
-                + text_featurizer
                 + drop_col
+                + delayed_features
+                + text_featurizer
                 + datetime
                 + imputer
-                + delayed_features
                 + ohe
                 + standard_scaler
                 + [estimator_class]
