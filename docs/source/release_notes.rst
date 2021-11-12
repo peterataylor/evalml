@@ -2,6 +2,7 @@ Release Notes
 -------------
 **Future Releases**
     * Enhancements
+        * Required the ``date_index`` parameter to be specified for time series problems  in ``AutoMLSearch`` :pr:`3041`
     * Fixes
     * Changes
     * Documentation Changes
@@ -10,6 +11,8 @@ Release Notes
 .. warning::
 
     **Breaking Changes**
+        * Changed time series problems in ``AutoMLSearch`` to need a not-``None`` ``date_index`` :pr:`3041`
+        * Changed the ``DelayedFeatureTransformer`` to throw a ``ValueError`` during fit if the ``date_index`` is ``None`` :pr:`3041`
 
 
 **v0.37.0 Nov. 9, 2021**
